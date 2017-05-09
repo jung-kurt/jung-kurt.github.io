@@ -18,11 +18,25 @@
       color: #345;
     }
     
+    .syntax {
+      display: block;
+      white-space: pre;
+      font-family: monospace;
+      background-color: #efe;
+      border: 1px solid #474;
+      margin: 1em 0;
+      padding: 0.25em 1.5em;
+    }
+    
     .warning {
       background-color: #ffd;
       border: 1px solid #665;
       margin: 1em 0;
       padding: 0.25em 1.5em;
+    }
+    
+    .key {
+      color: #474;
     }
     
     pre {
@@ -115,8 +129,7 @@ such as lua, perl or python.</p>
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:</p>
 
-<pre><code>cgi match exec [args...]
-</code></pre>
+<div class="syntax"><p><span class="key">cgi</span> match exec [args&hellip;]</p></div>
 
 <p>For example:</p>
 
@@ -195,13 +208,12 @@ environment variables known to Caddy, or specify more than one match pattern
 for a given rule, you will need to use the advanced directive syntax. That
 looks like this:</p>
 
-<pre><code>cgi {
-    match match [match2...]
-    exec script [args...]
-    env key1=val1 [key2=val2...]
-    pass_env key1 [key2...]
-}
-</code></pre>
+<div class="syntax"><p><span class="key">cgi</span> {
+  <span class="key">match</span> match [match2&hellip;]
+  <span class="key">exec</span> script [args&hellip;]
+  <span class="key">env</span> key1=val1 [key2=val2&hellip;]
+  <span class="key">pass_env</span> key1 [key2&hellip;]
+}</p></div>
 
 <p>For example,</p>
 
