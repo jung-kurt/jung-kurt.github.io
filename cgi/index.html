@@ -39,6 +39,10 @@
       color: #474;
     }
     
+    .subkey {
+      font-style: italic;
+    }
+    
     pre {
       color: #ddd;
       background-color: #444;
@@ -129,7 +133,7 @@ such as lua, perl or python.</p>
 script. The directive can be repeated any reasonable number of times. Here is
 the basic syntax:</p>
 
-<div class="syntax"><p><span class="key">cgi</span> match exec [args&hellip;]</p></div>
+<div class="syntax"><p><span class="key">cgi</span> <span class="subkey">match exec [args&hellip;]</span></p></div>
 
 <p>For example:</p>
 
@@ -209,10 +213,10 @@ for a given rule, you will need to use the advanced directive syntax. That
 looks like this:</p>
 
 <div class="syntax"><p><span class="key">cgi</span> {
-  <span class="key">match</span> match [match2&hellip;]
-  <span class="key">exec</span> script [args&hellip;]
-  <span class="key">env</span> key1=val1 [key2=val2&hellip;]
-  <span class="key">pass_env</span> key1 [key2&hellip;]
+  <span class="key">match</span> <span class="subkey">match [match2&hellip;]</span>
+  <span class="key">exec</span> <span class="subkey">script [args&hellip;]</span>
+  <span class="key">env</span> <span class="subkey">key1=val1 [key2=val2&hellip;]</span>
+  <span class="key">pass_env</span> <span class="subkey">key1 [key2&hellip;]</span>
 }</p></div>
 
 <p>For example,</p>
