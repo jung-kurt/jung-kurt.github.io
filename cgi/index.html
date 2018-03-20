@@ -222,6 +222,7 @@ looks like this:</p>
 
 <div class="syntax"><p><span class="key">cgi</span> {
   <span class="key">match</span> <span class="subkey">match [match2&hellip;]</span>
+  <span class="key">except</span> <span class="subkey">match [match2&hellip;]</span>
   <span class="key">exec</span> <span class="subkey">script [args&hellip;]</span>
   <span class="key">env</span> <span class="subkey">key1=val1 [key2=val2&hellip;]</span>
   <span class="key">pass_env</span> <span class="subkey">key1 [key2&hellip;]</span>
@@ -231,6 +232,7 @@ looks like this:</p>
 
 <pre><code>cgi {
     match /sample/*.php /sample/app/*.php
+    except /sample/init.php
     exec /usr/local/cgi-bin/phpwrap /usr/local/cgi-bin{match}
     env DB=/usr/local/share/app/app.db SECRET=/usr/local/share/app/secret
     pass_env HOME UID
@@ -238,8 +240,13 @@ looks like this:</p>
 </code></pre>
 
 <p>With the advanced syntax, the <code>exec</code> subdirective must appear exactly once. The
-<code>match</code> subdirective must appear at least once. The <code>env</code> and <code>pass_env</code>
-subdirectives can appear any reasonable number of times.</p>
+<code>match</code> subdirective must appear at least once. The <code>env</code>, <code>pass_env</code>, and
+<code>except</code> subdirectives can appear any reasonable number of times.</p>
+
+<p>The <code>except</code> subdirective uses the same pattern matching logic that is used
+with the <code>match</code> subdirective. Any request that matches a <code>match</code> pattern is
+then checked with the patterns in <code>except</code>, if any. If any matches are made
+with the <code>except</code> pattern, the request is rejected.</p>
 
 <p>The values associated with environment variable keys are all subject to
 placeholder substitution, just as with the script name and arguments.</p>
