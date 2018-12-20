@@ -227,6 +227,8 @@ looks like this:</p>
   <span class="key">env</span> <span class="subkey">key1=val1 [key2=val2&hellip;]</span>
   <span class="key">pass_env</span> <span class="subkey">key1 [key2&hellip;]</span>
   <span class="key">empty_env</span> <span class="subkey">key1 [key2&hellip;]</span>
+  <span class="key">pass_all_env</span>
+  <span class="key">inspect</span>
 }</p></div>
 
 <p>For example,</p>
@@ -244,7 +246,7 @@ looks like this:</p>
 <p>With the advanced syntax, the <code>exec</code> subdirective must appear exactly once. The
 <code>match</code> subdirective must appear at least once. The <code>env</code>, <code>pass_env</code>,
 <code>empty_env</code>, and <code>except</code> subdirectives can appear any reasonable number of
-times.</p>
+times. <code>pass_all_env</code> and <code>inspect</code> may appear once.</p>
 
 <p>The <code>except</code> subdirective uses the same pattern matching logic that is used
 with the <code>match</code> subdirective except that the request must match a rule fully;
@@ -265,7 +267,17 @@ placeholder substitution, just as with the script name and arguments.</p>
 <p>If your CGI application runs properly at the command line but fails to run from
 Caddy it is possible that certain environment variables may be missing. For
 example, the ruby gem loader evidently requires the <code>HOME</code> environment variable
-to be set; you can do this with the subdirective <code>pass_env HOME</code>.</p>
+to be set; you can do this with the subdirective <code>pass_env HOME</code>. Another class
+of problematic applications require the <code>COMPUTERNAME</code> variable.</p>
+
+<p>The <code>pass_all_env</code> subdirective instructs Caddy to pass each environment
+variable it knows about to the CGI excutable. This addresses a common
+frustration that is caused when an executable requires an environment variable
+and fails without a descriptive error message when the variable cannot be
+found. These applications often run fine from the command prompt but fail when
+invoked with CGI. The risk with this subdirective is that a lot of server
+information is shared with the CGI executable. Use this subdirective only with
+CGI applications that you trust not to leak this information.</p>
 
 <h3>JSON web tokens</h3>
 
