@@ -150,10 +150,11 @@ the basic syntax:</p>
 
 <p>When a request such as https://example.com/report or
 https://example.com/report/weekly arrives, the cgi middleware will detect the
-match and invoke the script named /usr/local/cgi-bin/report. Here, it is
-assumed that the script is self-contained, for example a pre-compiled CGI
-application or a shell script. Here is an example of a standalone script,
-similar to one used in the cgi plugin&rsquo;s test suite:</p>
+match and invoke the script named /usr/local/cgi-bin/report. The current
+working directory will be the same as Caddy itself. Here, it is assumed that
+the script is self-contained, for example a pre-compiled CGI application or a
+shell script. Here is an example of a standalone script, similar to one used in
+the cgi plugin&rsquo;s test suite:</p>
 
 <pre><code>#!/bin/bash
 
@@ -224,6 +225,7 @@ looks like this:</p>
   <span class="key">match</span> <span class="subkey">match [match2&hellip;]</span>
   <span class="key">except</span> <span class="subkey">match [match2&hellip;]</span>
   <span class="key">exec</span> <span class="subkey">script [args&hellip;]</span>
+  <span class="key">dir</span> <span class="subkey">directory</span>
   <span class="key">env</span> <span class="subkey">key1=val1 [key2=val2&hellip;]</span>
   <span class="key">pass_env</span> <span class="subkey">key1 [key2&hellip;]</span>
   <span class="key">empty_env</span> <span class="subkey">key1 [key2&hellip;]</span>
@@ -246,7 +248,10 @@ looks like this:</p>
 <p>With the advanced syntax, the <code>exec</code> subdirective must appear exactly once. The
 <code>match</code> subdirective must appear at least once. The <code>env</code>, <code>pass_env</code>,
 <code>empty_env</code>, and <code>except</code> subdirectives can appear any reasonable number of
-times. <code>pass_all_env</code> and <code>inspect</code> may appear once.</p>
+times. <code>pass_all_env</code>, <code>dir</code> may appear once.</p>
+
+<p>The <code>dir</code> subdirective specifies the CGI executable&rsquo;s working directory. If it
+is not specified, Caddy&rsquo;s current working directory is used.</p>
 
 <p>The <code>except</code> subdirective uses the same pattern matching logic that is used
 with the <code>match</code> subdirective except that the request must match a rule fully;
