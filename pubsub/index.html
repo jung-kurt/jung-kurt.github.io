@@ -1,0 +1,186 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1 minimum-scale=1 user-scalable=0" />
+  <title>CGI for Caddy</title>
+  <style>
+    body {
+      max-width: 800px;
+      font-family: sans-serif;
+      padding: 1em;
+    }
+    
+    h1,
+    h2,
+    h3 {
+      color: #345;
+    }
+    
+    .syntax {
+      display: block;
+      white-space: pre;
+      font-family: monospace;
+      background-color: #efe;
+      border: 1px solid #474;
+      margin: 1em 0;
+      padding: 0.25em 1.5em;
+    }
+    
+    .warning {
+      background-color: #ffd;
+      border: 1px solid #665;
+      margin: 1em 0;
+      padding: 0.25em 1.5em;
+    }
+    
+    .key {
+      color: #474;
+    }
+    
+    .subkey {
+      font-style: italic;
+    }
+    
+    pre {
+      color: #ddd;
+      background-color: #444;
+      margin: 1em 0;
+      padding: 0.25em 0.5em;
+      overflow-x: scroll;
+    }
+  </style>
+</head>
+
+<body>
+<h1>Pubsub for Caddy</h1>
+
+<p><a href="https://github.com/jung-kurt/caddy-pubsub"><img src="https://img.shields.io/badge/project-Git_Hub-blue.svg" alt="Git Hub repository" /></a>
+<a href="https://github.com/jung-kurt/"><img src="https://img.shields.io/badge/author-Kurt_Jung-blue.svg" alt="Kurt Jung" /></a>
+<a href="https://raw.githubusercontent.com/jung-kurt/caddy-pubsub/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT licensed" /></a>
+<a href="https://goreportcard.com/report/github.com/jung-kurt/caddy-pubsub"><img src="https://goreportcard.com/badge/github.com/jung-kurt/caddy-pubsub" alt="Report" /></a></p>
+
+<p>This plugin lets you easily push event notifications to any practical number of
+web clients. To publish an event, content that includes a category and body is
+posted to the &ldquo;publish&rdquo; URL configured in the Caddyfile. To subscribe to
+published events, a web client simply connects to the &ldquo;subscribe&rdquo; URL
+configured in the Caddyfile. This connection can be managed by including the
+small, dependency-free file ps.js in your web application and using the
+non-blocking methods of a Subscriber instance.</p>
+
+<p>This plugin uses longpolling (specifically, <a href="https://github.com/jcuga/golongpoll">golongpoll</a>) to connect
+clients to the server. The advantages of this are significant. Longpoll
+connections</p>
+
+<ul>
+<li>are straightforward HTTP/HTTPS</li>
+<li>are not thwarted by firewalls and proxies</li>
+<li>are supported by virtually all browsers</li>
+</ul>
+
+
+<p>Additionally, this plugin provides a simple web-based interface to publish
+events, so any software capable of posting content to the Caddy server, such as
+wget and web browsers, can dispatch information to listening clients. This
+flexibility allows short-lived applications, suchs as crontab scripts and CGI
+scripts, to publish events that are of interest to subscribing web clients.</p>
+
+<p>On the downside, longpoll connections are one-direction only. Published events
+flow only from the server to clients. However, because of this plugin&rsquo;s simple
+publishing interface, a web client that receives an event can immediately
+publish its own response.</p>
+
+<h2>Security Considerations</h2>
+
+<p>As with websockets, longpolling requires special care to protect both the
+server and all connected clients.</p>
+
+<div class="warning"><p><strong>Longpolling consumes resources on the server.</strong> Too many connections to
+clients can impact server operations. It is important to protect the
+configured &ldquo;subscribe&rdquo; path with some form of authentication such as
+<a href="https://caddyserver.com/docs/basicauth">basic authentication</a> (be sure to use HTTPS!) or <a href="https://github.com/BTBurke/caddy-jwt">JWT</a> in order to
+manage the number of connections that your system will maintain.</p></div>
+
+<div class="warning"><p><strong>Published events can instantly reach a large number of clients.</strong> Be sure
+to require authorization in order to access the configured &ldquo;publish&rdquo; path to
+prevent rogue publishers from dispatching unexpected content to clients or
+flooding the subscription channels.</p></div>
+
+<h2>Basic Syntax</h2>
+
+<p>The basic pubsub directive lets you specify a &ldquo;publish&rdquo; path and a
+corresponding &ldquo;subscribe&rdquo; path. This directive can be repeated. Each pubsub
+block is managed by its own longpoll instance so categories are effectively
+scoped by directive.</p>
+
+<div class="syntax"><p><span class="key">pubsub</span> <span class="subkey">publish_path</span> <span class="subkey">subscribe_path</span></p></div>
+
+<p>For example:</p>
+
+<pre><code>cgi /chat/publish /chat/subscribe
+</code></pre>
+
+<p>The specified paths are virtual; they do not refer to any filesystem resources.</p>
+
+<h3>Publishing</h3>
+
+<p>When the Caddy server receives a call that matches the publish_path URL, the
+pubsub plugin responds by checking the request for the url-encoded form fields
+&ldquo;category&rdquo; and &ldquo;body&rdquo;. If these form values are sent to the server in a POST
+request rather than included in the tail of the URL in a GET request, the
+Content-Type must be &ldquo;application/x-www-form-urlencoded&rdquo;. The body value is
+then dispatched verbatim to all clients that are currently subscribed to the
+specified category. Structured data is easily dispatched by sending a
+JSON-encoded value. The included JavaScript file ps.js has functions that
+handle this encoding and decoding automatically.</p>
+
+<p>At its simplest, a publish call might look like</p>
+
+<pre><code>https://example.com/chat/publish?category=team&amp;body=Hello%20world
+</code></pre>
+
+<p>In this example, the body &ldquo;Hello world&rdquo; is dispatched to all subscribers of the
+&ldquo;team&rdquo; category.</p>
+
+<h3>Subscribing</h3>
+
+<p>When the Caddy server receives a call that matches the subscribe_path URL, the
+pubsub plugin keeps the connection alive until a publication event of the
+correct category is returned or the configured time limit is reached. In either
+case, the client then makes another similar request of the server. This cycle
+continues until the client page is dismissed. When the longpoll instance
+detects that the client is no longer responsive it gracefully drops the client
+from its subscription list.</p>
+
+<h2>Advanced Syntax</h2>
+
+<p>The basic syntax shown above is likely all you will need to configure the
+pubsub plugin. If some control over the underlying golongpoll package is
+needed, you can use all or part of the advanced syntax shown here.</p>
+
+<div class="syntax"><p><span class="key">pubsub</span> <span class="subkey">publish_path</span> <span class="subkey">subscribe_path</span> {
+ <span class="key">MaxLongpollTimeoutSeconds</span> <span class="subkey">timeout</span>
+ <span class="key">MaxEventBufferSize</span> <span class="subkey">count</span>
+ <span class="key">EventTimeToLiveSeconds</span> <span class="subkey">timeout</span>
+ <span class="key">DeleteEventAfterFirstRetrieval</span>
+}</p></div>
+
+<p>Any missing fields are replaced with their default values; see the
+<a href="https://godoc.org/github.com/jcuga/golongpoll">golongpoll documentation</a> for more details.</p>
+
+<p>The <code>MaxLongpollTimeoutSeconds</code> subdirective specifies the maximum number of
+seconds that the longpoll server will keep a client connection alive.</p>
+
+<p>The <code>MaxEventBufferSize</code> subdirective specifies the maximum number of events of
+a particular category that will be kept by the longpoll server. Beyond this
+limit, events will be dropped even if they have not expired.</p>
+
+<p>The <code>EventTimeToLiveSeconds</code> subdirective specifies how long events will be
+retained by the longpoll server.</p>
+
+<p>If the <code>DeleteEventAfterFirstRetrieval</code> subdirective is present then events
+will be deleted right after they have been dispatched to current subscribers.</p>
+	</body>
+
+</html>
