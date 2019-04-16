@@ -83,7 +83,7 @@ connections</p>
 <p>Additionally, this plugin provides a simple web-based interface to publish
 events, so any software capable of posting content to the Caddy server, such as
 wget and web browsers, can dispatch information to listening clients. This
-flexibility allows short-lived applications, suchs as crontab scripts and CGI
+flexibility allows short-lived applications, such as crontab scripts and CGI
 scripts, to publish events that are of interest to subscribing web clients.</p>
 
 <p>On the downside, longpoll connections are one-direction only. Published events
@@ -118,7 +118,7 @@ scoped by directive.</p>
 
 <p>For example:</p>
 
-<pre><code>cgi /chat/publish /chat/subscribe
+<pre><code>pubsub /chat/publish /chat/subscribe
 </code></pre>
 
 <p>The specified paths are virtual; they do not refer to any filesystem resources.</p>
@@ -181,6 +181,89 @@ retained by the longpoll server.</p>
 
 <p>If the <code>DeleteEventAfterFirstRetrieval</code> subdirective is present then events
 will be deleted right after they have been dispatched to current subscribers.</p>
+
+<h2>Running the example</h2>
+
+<ul>
+<li><p>Obtain or build a Caddy web server with the pubsub plugin.</p></li>
+<li><p>Create an example directory and download the files in the repository
+<a href="https://github.com/jung-kurt/caddy-pubsub/tree/master/example">example</a> directory to it. Make this your default working
+directory.</p></li>
+<li><p>Edit the file named Caddyfile. Modify the site address to an
+appropriate local network address. Ideally, you will use an address that can
+be accessed from a number of devices on your network. (A local interface,
+such as 127.0.0.5, will work, but then you will have to simulate multiple
+devices by opening multiple tabs in your browser.) You may wish to use a
+non-standard port if you need to avoid interfering with another server. An
+example Caddyfile might look like the following. The values for the
+authorization fields and paths are used as defaults in the example script, so
+leaving them as they are will simplify the demonstration.</p>
+
+<pre><code>  http://192.168.0.10:8000 {
+      basicauth /demo/publish publish 123
+      basicauth /demo/subscribe subscribe 123
+      pubsub /demo/publish /demo/subscribe
+  }
+</code></pre></li>
+<li><p>Launch the Caddy web server from the directory that contains your example
+Caddyfile. The command might be simply <code>caddy</code> or, if the caddy executable
+you wish to run is not on the default search path, you will need to qualify
+the name with its location.</p></li>
+<li><p>Access the server with the web browsers of a number of devices.
+Alternatively, open a number of tabs in a single browser and point them to
+the server.</p></li>
+<li><p>On each open page, click the &ldquo;Configure&rdquo; button and make appropriate changes.
+The various fields like &ldquo;Auth name&rdquo;, &ldquo;Auth password&rdquo;, and &ldquo;URL&rdquo; are
+pre-filled to match the values in the sample Caddyfile shown above. You may
+enter a name in the &ldquo;Publisher name&rdquo; field. If you leave it blank, it will
+receive a random name like &ldquo;user_42&rdquo; the first time you publish an event.</p></li>
+<li><p>On each open page, click the &ldquo;Run&rdquo; button and then the &ldquo;Start&rdquo; button.
+Simulate the publication of events by clicking the &ldquo;A&rdquo;, &ldquo;B&rdquo;, and &ldquo;C&rdquo; buttons
+from various devices or tab pages. These events will sent to the web server
+and dispatched to all subscribing pages. These events will be displayed at
+beneath the buttons in a list.</p></li>
+</ul>
+
+
+<h2>Using pubsub in you own web applications</h2>
+
+<p>The JavaScript file ps.js is included in the example shown above. This script
+may be included in a web page with the following line:</p>
+
+<pre><code>&lt;script src="ps.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<p>The script is small and dependency-free and should be easy to modify if needed.
+Within your application code, instantiate a Subscriber instance as follows:</p>
+
+<pre><code>subscribe = ps.Subscriber(category, url, callback, authorization);
+</code></pre>
+
+<p>The parameters are:</p>
+
+<ul>
+<li><strong>category</strong>: a short string that identifies the event category to which to
+subscribe</li>
+<li><strong>url</strong>: the subscribe_path configured in the Caddyfile (in the example above,
+this is &ldquo;/demo/subscribe&rdquo;)</li>
+<li><strong>callback</strong>: this is a function that is called (with the published body and
+server timestamp) for each event of the specified category</li>
+<li><strong>authorization</strong>: a string like &ldquo;Basic QWxhZGRpbjpPcGVuU2VzYW1l&rdquo; that will be
+sent as an authorization header.</li>
+</ul>
+
+
+<p>More details can be found in the comments in the ps.js file.</p>
+
+<p>To start the subscription, call</p>
+
+<pre><code>subscribe.start();
+</code></pre>
+
+<p>To end the subscription, call</p>
+
+<pre><code>subscribe.stop();
+</code></pre>
 	</body>
 
 </html>
