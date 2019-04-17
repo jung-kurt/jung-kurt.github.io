@@ -237,10 +237,10 @@ Within your application code, instantiate a Subscriber instance as follows:</p>
 <li><p><strong>category</strong>: a short string that identifies the event category to which to
 subscribe</p></li>
 <li><p><strong>url</strong>: the subscribe_path configured in the Caddyfile (in the example above,
-this is &ldquo;/demo/subscribe&rdquo;)</p></li>
+this is &ldquo;/psdemo/subscribe&rdquo;)</p></li>
 <li><p><strong>callback</strong>: this is a function that is called (with the published body and
 server timestamp) for each event of the specified category</p></li>
-<li><p><strong>authorization</strong>: a string like &ldquo;Basic QWxhZGRpbjpPcGVuU2VzYW1l&rdquo; that will be
+<li><p><strong>authorization</strong>: a string like &ldquo;Basic c3Vic2NyaWJlOjEyMw==&rdquo; that will be
 sent as an authorization header.</p></li>
 </ul>
 
@@ -268,11 +268,11 @@ sent as an authorization header.</p></li>
 <li><p><strong>category</strong>: a short string that identifies the event category of the
 published event</p></li>
 <li><p><strong>url</strong>: the publish_path configured in the Caddyfile (in the example above,
-this is &ldquo;/demo/publish&rdquo;)</p></li>
+this is &ldquo;/psdemo/publish&rdquo;)</p></li>
 <li><p><strong>body</strong>: this is the text that will be dispatched to all subscribers of
 events with the specified category; this text is often a JSON-encoded object</p></li>
-<li><p><strong>authorization</strong>: a string like &ldquo;Basic QWxhZGRpbjpPcGVuU2VzYW1l&rdquo; that will be
-sent as an authorization header.</p></li>
+<li><p><strong>authorization</strong>: a string like &ldquo;Basic cHVibGlzaDoxMjM=&rdquo; that will be sent
+as an authorization header.</p></li>
 </ul>
 
 	</body>
