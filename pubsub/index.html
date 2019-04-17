@@ -243,11 +243,11 @@ server timestamp) for each event of the specified category</p></li>
 <li><p><strong>authorization</strong>: a string like &ldquo;Basic c3Vic2NyaWJlOjEyMw==&rdquo; that will be
 sent as an authorization header.</p></li>
 <li><p><strong>options</strong>: an object that contains the fields
-<strong>timeout</strong> (seconds),
-<strong>successDelay</strong> (milliseconds),
-<strong>errorDelay</strong> (milliseconds), and
+<strong>timeout</strong> (seconds, default 45),
+<strong>successDelay</strong> (milliseconds, default 10),
+<strong>errorDelay</strong> (milliseconds, default 3000), and
 <strong>json</strong> (boolean, true if event bodies are JSON-encoded and
-should be automatically decoded).</p></li>
+should be automatically decoded, default false).</p></li>
 </ul>
 
 
