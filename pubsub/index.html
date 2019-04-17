@@ -228,7 +228,7 @@ may be included in a web page with the following line:</p>
 <p>The script is small and dependency-free and should be easy to modify if needed.
 Within your application code, instantiate a Subscriber instance as follows:</p>
 
-<pre><code>subscribe = ps.Subscriber(category, url, callback, authorization);
+<pre><code>subscribe = ps.Subscriber(category, url, callback, authorization, options);
 </code></pre>
 
 <p>The parameters are:</p>
@@ -242,6 +242,12 @@ this is &ldquo;/psdemo/subscribe&rdquo;)</p></li>
 server timestamp) for each event of the specified category</p></li>
 <li><p><strong>authorization</strong>: a string like &ldquo;Basic c3Vic2NyaWJlOjEyMw==&rdquo; that will be
 sent as an authorization header.</p></li>
+<li><p><strong>options</strong>: an object that contains the fields
+<strong>timeout</strong> (seconds),
+<strong>successDelay</strong> (milliseconds),
+<strong>errorDelay</strong> (milliseconds), and
+<strong>json</strong> (boolean, true if event bodies are JSON-encoded and
+should be automatically decoded).</p></li>
 </ul>
 
 
