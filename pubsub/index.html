@@ -281,6 +281,16 @@ events with the specified category; this text is often a JSON-encoded object</p>
 as an authorization header.</p></li>
 </ul>
 
+
+<p>A variation of the ps.publish() function is</p>
+
+<pre><code>ps.publishObj(category, url, body, authorization);
+</code></pre>
+
+<p>In this case, body can be any JSON-encodable value such as an array or an
+object. When subscribing to events that are published this way, it is
+convenient to set the &ldquo;json&rdquo; field of the options argument of ps.Subscriber()
+to true so that the event body is automatically decoded.</p>
 	</body>
 
 </html>
