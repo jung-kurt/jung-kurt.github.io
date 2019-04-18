@@ -182,6 +182,16 @@ will be deleted right after they have been dispatched to current subscribers.</p
 
 <h2>Running the example</h2>
 
+<p>Here is a sample Caddyfile that can be modified for use in the following example:</p>
+
+<pre><code>http://192.168.1.20 {
+    bind 192.168.1.20
+    basicauth /psdemo/publish publish 123
+    basicauth /psdemo/subscribe subscribe 123
+    pubsub /psdemo/publish /psdemo/subscribe
+}
+</code></pre>
+
 <ul>
 <li><p>Obtain or build a Caddy web server with the pubsub plugin.</p></li>
 <li><p>Create an example directory and download the files in the repository
@@ -282,7 +292,7 @@ as an authorization header.</p></li>
 </ul>
 
 
-<p>A variation of the ps.publish() function is</p>
+<p>A variation of the <code>ps.publish()</code> function is</p>
 
 <pre><code>ps.publishObj(category, url, body, authorization);
 </code></pre>
