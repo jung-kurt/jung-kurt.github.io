@@ -8,7 +8,7 @@ A Common Gateway Interface plugin for the [Caddy](https://caddyserver.com/) web 
 
 A publish and subscribe plugin for the [Caddy](https://caddyserver.com/) web server.
 
-## [GoFPDF](gofpdf)
+## [GoFPDF document generator](gofpdf)
 
 A PDF document generator with high level support for text, drawing and images.
 
