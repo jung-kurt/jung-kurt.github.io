@@ -1,0 +1,293 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1 minimum-scale=1 user-scalable=0" />
+  <title>CGI for Caddy</title>
+  <style>
+    body {
+      max-width: 800px;
+      font-family: sans-serif;
+      padding: 1em;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #345;
+    }
+
+    .syntax {
+      display: block;
+      white-space: pre;
+      font-family: monospace;
+      background-color: #efe;
+      border: 1px solid #474;
+      margin: 1em 0;
+      padding: 0.25em 1.5em;
+    }
+
+    .warning {
+      background-color: #ffd;
+      border: 1px solid #665;
+      margin: 1em 0;
+      padding: 0.25em 1.5em;
+    }
+
+    .key {
+      color: #474;
+    }
+
+    .subkey {
+      font-style: italic;
+    }
+
+    pre {
+      margin: 1.5em 0;
+      background-color: #eee;
+      padding: 1em;
+      overflow-x: scroll;
+    }
+  </style>
+</head>
+
+<body>
+<h1>GoFPDF document generator</h1>
+
+<p><a href="https://github.com/jung-kurt/gofpdf"><img src="https://img.shields.io/badge/project-Git_Hub-blue.svg" alt="Git Hub repository" /></a>
+<a href="https://github.com/jung-kurt/"><img src="https://img.shields.io/badge/author-Kurt_Jung-blue.svg" alt="Kurt Jung" /></a>
+<a href="https://raw.githubusercontent.com/jung-kurt/gofpdf/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT licensed" /></a>
+<a href="https://goreportcard.com/report/github.com/jung-kurt/gofpdf"><img src="https://goreportcard.com/badge/github.com/jung-kurt/gofpdf" alt="Report" /></a>
+<a href="https://godoc.org/github.com/jung-kurt/gofpdf"><img src="https://img.shields.io/badge/godoc-GoFPDF-blue.svg" alt="GoDoc" /></a></p>
+
+<p><img src="image/logo_gofpdf.jpg?raw=true" title="gofpdf" alt="gofpdf" /></p>
+
+<p>Package gofpdf implements a PDF document generator with high level support for
+text, drawing and images.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Choice of measurement unit, page format and margins</li>
+<li>Page header and footer management</li>
+<li>Automatic page breaks, line breaks, and text justification</li>
+<li>Inclusion of JPEG, PNG, GIF, TIFF and basic path-only SVG images</li>
+<li>Colors, gradients and alpha channel transparency</li>
+<li>Outline bookmarks</li>
+<li>Internal and external links</li>
+<li>TrueType, Type1 and encoding support</li>
+<li>Page compression</li>
+<li>Lines, Bézier curves, arcs, and ellipses</li>
+<li>Rotation, scaling, skewing, translation, and mirroring</li>
+<li>Clipping</li>
+<li>Document protection</li>
+<li>Layers</li>
+<li>Templates</li>
+<li>Barcodes</li>
+<li>Charting facility</li>
+</ul>
+
+
+<p>gofpdf has no dependencies other than the Go standard library. All tests pass
+on Linux, Mac and Windows platforms.</p>
+
+<p>Like FPDF version 1.7, from which gofpdf is derived, this package does not yet
+support UTF-8 fonts. In particular, languages that require more than one code
+page such as Chinese, Japanese, and Arabic are not currently supported. This is
+explained in <a href="https://github.com/jung-kurt/gofpdf/issues/109">issue 109</a>. However, support is provided to
+automatically translate UTF-8 runes to code page encodings for languages that
+have fewer than 256 glyphs.</p>
+
+<h2>Installation</h2>
+
+<p>To install the package on your system, run</p>
+
+<pre><code>go get github.com/jung-kurt/gofpdf
+</code></pre>
+
+<p>Later, to receive updates, run</p>
+
+<pre><code>go get -u -v github.com/jung-kurt/gofpdf/...
+</code></pre>
+
+<h2>Quick Start</h2>
+
+<p>The following Go code generates a simple PDF file.</p>
+
+<pre><code>pdf := gofpdf.New("P", "mm", "A4", "")
+pdf.AddPage()
+pdf.SetFont("Arial", "B", 16)
+pdf.Cell(40, 10, "Hello, world")
+err := pdf.OutputFileAndClose("hello.pdf")
+</code></pre>
+
+<p>See the functions in the
+<a href="https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go">fpdf_test.go</a>
+file (shown as examples in this documentation) for more advanced PDF examples.</p>
+
+<h2>Errors</h2>
+
+<p>If an error occurs in an Fpdf method, an internal error field is set. After
+this occurs, Fpdf method calls typically return without performing any
+operations and the error state is retained. This error management scheme
+facilitates PDF generation since individual method calls do not need to be
+examined for failure; it is generally sufficient to wait until after Output()
+is called. For the same reason, if an error occurs in the calling application
+during PDF generation, it may be desirable for the application to transfer the
+error to the Fpdf instance by calling the <code>SetError()</code> method or the
+<code>SetErrorf()</code> method. At any time during the life cycle of the Fpdf instance,
+the error state can be determined with a call to <code>Ok()</code> or <code>Err()</code>. The error
+itself can be retrieved with a call to <code>Error()</code>.</p>
+
+<h2>Conversion Notes</h2>
+
+<p>This package is a relatively straightforward translation from the original
+<a href="http://www.fpdf.org/">FPDF</a> library written in PHP (despite the caveat in the
+introduction to <a href="https://golang.org/doc/effective_go.html">Effective Go</a>). The
+API names have been retained even though the Go idiom would suggest otherwise
+(for example, <code>pdf.GetX()</code> is used rather than simply <code>pdf.X()</code>). The
+similarity of the two libraries makes the original FPDF website a good source
+of information. It includes a forum and FAQ.</p>
+
+<p>However, some internal changes have been made. Page content is built up using
+buffers (of type bytes.Buffer) rather than repeated string concatenation.
+Errors are handled as explained above rather than panicking. Output is
+generated through an interface of type io.Writer or io.WriteCloser. A number of
+the original PHP methods behave differently based on the type of the arguments
+that are passed to them; in these cases additional methods have been exported
+to provide similar functionality. Font definition files are produced in JSON
+rather than PHP.</p>
+
+<h2>Example PDFs</h2>
+
+<p>A side effect of running <code>go test ./...</code> is the production of a number of
+example PDFs. These can be found in the gofpdf/pdf directory after the tests
+complete.</p>
+
+<p>Please note that these examples run in the context of a test. In order run an
+example as a standalone application, you&rsquo;ll need to examine
+<a href="https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go">fpdf_test.go</a> for some helper routines, for example
+<code>exampleFilename()</code> and <code>summary()</code>.</p>
+
+<p>Example PDFs can be compared with reference copies in order to verify that they
+have been generated as expected. This comparison will be performed if a PDF
+with the same name as the example PDF is placed in the gofpdf/pdf/reference
+directory and if the third argument to <code>ComparePDFFiles()</code> in
+internal/example/example.go is true. (By default it is false.) The routine that
+summarizes an example will look for this file and, if found, will call
+<code>ComparePDFFiles()</code> to check the example PDF for equality with its reference PDF.
+If differences exist between the two files they will be printed to standard
+output and the test will fail. If the reference file is missing, the comparison
+is considered to succeed. In order to successfully compare two PDFs, the
+placement of internal resources must be consistent and the internal creation
+timestamps must be the same. To do this, the methods <code>SetCatalogSort()</code> and
+<code>SetCreationDate()</code> need to be called for both files. This is done automatically
+for all examples.</p>
+
+<h2>Nonstandard Fonts</h2>
+
+<p>Nothing special is required to use the standard PDF fonts (courier, helvetica,
+times, zapfdingbats) in your documents other than calling <code>SetFont()</code>.</p>
+
+<p>In order to use a different TrueType or Type1 font, you will need to generate a
+font definition file and, if the font will be embedded into PDFs, a compressed
+version of the font file. This is done by calling the <code>MakeFont()</code> function or
+using the included makefont command line utility. To create the utility, cd
+into the makefont subdirectory and run <code>go build</code>. This will produce a
+standalone executable named makefont. Select the appropriate encoding file from
+the font subdirectory and run the command as in the following example.</p>
+
+<pre><code>./makefont --embed --enc=../font/cp1252.map --dst=../font ../font/calligra.ttf
+</code></pre>
+
+<p>In your PDF generation code, call AddFont() to load the font and, as with the
+standard fonts, SetFont() to begin using it. Most examples, including the
+package example, demonstrate this method. Good sources of free, open-source
+fonts include <a href="https://fonts.google.com/">Google Fonts</a> and <a href="http://dejavu-fonts.org/">DejaVu Fonts</a>.</p>
+
+<h2>Related Packages</h2>
+
+<p>The <a href="https://github.com/llgcode/draw2d">draw2d</a> package is a two dimensional vector graphics library that
+can generate output in different forms. It uses gofpdf for its document
+production mode.</p>
+
+<h2>Contributing Changes</h2>
+
+<p>gofpdf is a global community effort and you are invited to make it even better.
+If you have implemented a new feature or corrected a problem, please consider
+contributing your change to the project. A contribution that does not directly
+pertain to the core functionality of gofpdf should be placed in its own
+directory directly beneath the <code>contrib</code> directory.</p>
+
+<p>Here are guidelines for making submissions. Your change should</p>
+
+<ul>
+<li>be compatible with the MIT License</li>
+<li>be properly documented</li>
+<li>be formatted with <code>go fmt</code></li>
+<li>include an example in <a href="https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go">fpdf_test.go</a> if appropriate</li>
+<li>conform to the standards of <a href="https://github.com/golang/lint">golint</a> and
+<a href="https://godoc.org/golang.org/x/tools/cmd/vet">go vet</a>, that is, <code>golint .</code> and
+<code>go vet .</code> should not generate any warnings</li>
+<li>not diminish <a href="https://blog.golang.org/cover">test coverage</a></li>
+</ul>
+
+
+<p><a href="https://help.github.com/articles/using-pull-requests/">Pull requests</a> are the preferred means of accepting your changes.</p>
+
+<h2>License</h2>
+
+<p>gofpdf is released under the MIT License. It is copyrighted by Kurt Jung and
+the contributors acknowledged below.</p>
+
+<h2>Acknowledgments</h2>
+
+<p>This package&rsquo;s code and documentation are closely derived from the <a href="http://www.fpdf.org/">FPDF</a>
+library created by Olivier Plathey, and a number of font and image resources
+are copied directly from it. Bruno Michel has provided valuable assistance with
+the code. Drawing support is adapted from the FPDF geometric figures script by
+David Hernández Sanz. Transparency support is adapted from the FPDF
+transparency script by Martin Hall-May. Support for gradients and clipping is
+adapted from FPDF scripts by Andreas Würmser. Support for outline bookmarks is
+adapted from Olivier Plathey by Manuel Cornes. Layer support is adapted from
+Olivier Plathey. Support for transformations is adapted from the FPDF
+transformation script by Moritz Wagner and Andreas Würmser. PDF protection is
+adapted from the work of Klemen Vodopivec for the FPDF product. Lawrence
+Kesteloot provided code to allow an image&rsquo;s extent to be determined prior to
+placement. Support for vertical alignment within a cell was provided by Stefan
+Schroeder. Ivan Daniluk generalized the font and image loading code to use the
+Reader interface while maintaining backward compatibility. Anthony Starks
+provided code for the Polygon function. Robert Lillack provided the Beziergon
+function and corrected some naming issues with the internal curve function.
+Claudio Felber provided implementations for dashed line drawing and generalized
+font loading. Stani Michiels provided support for multi-segment path drawing
+with smooth line joins, line join styles, enhanced fill modes, and has helped
+greatly with package presentation and tests. Templating is adapted by Marcus
+Downing from the FPDF_Tpl library created by Jan Slabon and Setasign. Jelmer
+Snoeck contributed packages that generate a variety of barcodes and help with
+registering images on the web. Jelmer Snoek and Guillermo Pascual augmented the
+basic HTML functionality with aligned text. Kent Quirk implemented
+backwards-compatible support for reading DPI from images that support it, and
+for setting DPI manually and then having it properly taken into account when
+calculating image size. Paulo Coutinho provided support for static embedded
+fonts. Dan Meyers added support for embedded JavaScript. David Fish added a
+generic alias-replacement function to enable, among other things, table of
+contents functionality. Andy Bakun identified and corrected a problem in which
+the internal catalogs were not sorted stably. Paul Montag added encoding and
+decoding functionality for templates, including images that are embedded in
+templates; this allows templates to be stored independently of gofpdf. Paul
+also added support for page boxes used in printing PDF documents. Wojciech
+Matusiak added supported for word spacing.</p>
+
+<h2>Roadmap</h2>
+
+<ul>
+<li>Handle UTF-8 source text natively. Until then, automatic translation of
+UTF-8 runes to code page bytes is provided.</li>
+<li>Improve test coverage as reported by the coverage tool.</li>
+</ul>
+
+	</body>
+
+</html>
