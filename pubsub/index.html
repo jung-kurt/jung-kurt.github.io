@@ -60,6 +60,9 @@
 <a href="https://raw.githubusercontent.com/jung-kurt/caddy-pubsub/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT licensed" /></a>
 <a href="https://goreportcard.com/report/github.com/jung-kurt/caddy-pubsub"><img src="https://goreportcard.com/badge/github.com/jung-kurt/caddy-pubsub" alt="Report" /></a></p>
 
+<p>Package pubsub implements a longpoll-based publish and subscribe middleware for
+<a href="https://caddyserver.com/">Caddy</a>, a modern, full-featured, easy-to-use web server.</p>
+
 <p>This plugin lets you easily push event notifications to any practical number of
 web clients. To publish an event, post content that includes a category and
 body to the &ldquo;publish&rdquo; URL configured in the Caddyfile. To subscribe to
@@ -220,10 +223,12 @@ field or leave it empty. A blank value will be replaced with a random name like
 &ldquo;user_42&rdquo; the first time you publish an event.</p></li>
 <li><p>On each open page, click the &ldquo;Run&rdquo; button and then the &ldquo;Start&rdquo; button.
 Simulate the publication of events by clicking the &ldquo;A&rdquo;, &ldquo;B&rdquo;, and &ldquo;C&rdquo; buttons
-from various devices or tab pages. These events will be sent to the web server
-and dispatched to all subscribing pages. These events will be displayed beneath
-the buttons in a list. A page can publish events even if it does not subscribe
-to them.</p></li>
+from various devices or tab pages. Additionally, you may click the &ldquo;Auto start&rdquo;
+button. This will begin an automatic sequence in which an event is published at
+random intervals. Published events will be sent to the web server and
+dispatched to all subscribing pages. These events will be displayed beneath the
+buttons in a list. A page can publish events even if it does not subscribe to
+them.</p></li>
 </ul>
 
 
@@ -299,7 +304,7 @@ as an authorization header.</p></li>
 
 <p>In this case, body can be any JSON-encodable value such as an array or an
 object. When subscribing to events that are published this way, it is
-convenient to set the &ldquo;json&rdquo; field of the options argument of ps.Subscriber()
+convenient to set the &ldquo;json&rdquo; field of the options argument of <code>ps.Subscriber()</code>
 to true so that the event body is automatically decoded.</p>
 	</body>
 
