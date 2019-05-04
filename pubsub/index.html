@@ -1,10 +1,11 @@
 <!doctype html>
 
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width initial-scale=1 maximum-scale=1 minimum-scale=1 user-scalable=0" />
-  <title>CGI for Caddy</title>
+  <title>Pubsub for Caddy</title>
   <style>
     body {
       max-width: 800px;
@@ -32,11 +33,12 @@
       background-color: #ffd;
       border: 1px solid #665;
       margin: 1em 0;
-      padding: 0.25em 1.5em;
+      padding: 0 1em;
     }
 
     .key {
-      color: #474;
+      color: #131;
+      font-weight: bold;
     }
 
     .subkey {
@@ -49,263 +51,164 @@
       padding: 1em;
       overflow-x: scroll;
     }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 </head>
 
 <body>
-<h1>Pubsub for Caddy</h1>
-
-<p><a href="https://github.com/jung-kurt/caddy-pubsub"><img src="https://img.shields.io/badge/project-Git_Hub-blue.svg" alt="Git Hub repository" /></a>
-<a href="https://github.com/jung-kurt/"><img src="https://img.shields.io/badge/author-Kurt_Jung-blue.svg" alt="Kurt Jung" /></a>
-<a href="https://raw.githubusercontent.com/jung-kurt/caddy-pubsub/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT licensed" /></a>
-<a href="https://goreportcard.com/report/github.com/jung-kurt/caddy-pubsub"><img src="https://goreportcard.com/badge/github.com/jung-kurt/caddy-pubsub" alt="Report" /></a></p>
-
-<p>Package pubsub implements a longpoll-based publish and subscribe middleware for
-<a href="https://caddyserver.com/">Caddy</a>, a modern, full-featured, easy-to-use web server.</p>
-
-<p>This plugin lets you easily push event notifications to any practical number of
-web clients. To publish an event, post content that includes a category and
-body to the &ldquo;publish&rdquo; URL configured in the Caddyfile. To subscribe to
-published events, simply connect your web client to the &ldquo;subscribe&rdquo; URL
-configured in the Caddyfile. To manage the subscription connection, include the
-small, dependency-free file ps.js in your web application and use the
-non-blocking methods of a Subscriber instance.</p>
-
-<p>This plugin uses longpolling (specifically, <a href="https://github.com/jcuga/golongpoll">golongpoll</a>) to connect
-clients to the server. The advantages of this are significant. Longpoll
-connections</p>
-
+<h1 id="pubsub-for-caddy">Pubsub for Caddy</h1>
+<p><a href="https://raw.githubusercontent.com/jung-kurt/caddy-pubsub/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT licensed" /></a> <a href="https://goreportcard.com/report/github.com/jung-kurt/caddy-pubsub"><img src="https://goreportcard.com/badge/github.com/jung-kurt/caddy-pubsub" alt="Report" /></a></p>
+<p>Package pubsub implements a longpoll-based publish and subscribe middleware for <a href="https://caddyserver.com/">Caddy</a>, a modern, full-featured, easy-to-use web server.</p>
+<p>This plugin lets you easily push event notifications to any practical number of web clients. To publish an event, post content that includes a category and body to the “publish” URL configured in the Caddyfile. To subscribe to published events, simply connect your web client to the “subscribe” URL configured in the Caddyfile. To manage the subscription connection, include the small, dependency-free file ps.js in your web application and use the non-blocking methods of a Subscriber instance.</p>
+<p>This plugin uses longpolling (specifically, <a href="https://github.com/jcuga/golongpoll">golongpoll</a>) to connect clients to the server. The advantages of this are significant. Longpoll connections</p>
 <ul>
 <li>are straightforward HTTP/HTTPS</li>
 <li>are not thwarted by firewalls and proxies</li>
 <li>are supported by virtually all browsers</li>
 </ul>
-
-
-<p>Additionally, this plugin provides a simple web-based interface to publish
-events, so any software capable of posting content to the Caddy server, such as
-wget and web browsers, can dispatch information to listening clients. This
-flexibility allows short-lived applications, such as crontab scripts and CGI
-scripts, to publish events that are of interest to subscribing web clients.</p>
-
-<p>On the downside, longpoll connections are one-direction only. Published events
-flow only from the server to clients. However, because of this plugin&rsquo;s simple
-publishing interface, a web client that receives an event can immediately
-publish its own response.</p>
-
-<h2>Security Considerations</h2>
-
-<p>As with websockets, longpolling requires special care to protect both the
-server and all connected clients.</p>
-
-<div class="warning"><p><strong>Longpolling consumes resources on the server.</strong> Too many connections to
-clients can impact server operations. It is important to protect the
-configured &ldquo;subscribe&rdquo; path with some form of authentication such as
-<a href="https://caddyserver.com/docs/basicauth">basic authentication</a> or <a href="https://github.com/BTBurke/caddy-jwt">JWT</a> in order to manage the number of
-connections that your system will maintain. Be sure to use HTTPS!</p></div>
-
-<div class="warning"><p><strong>Published events can instantly reach a large number of clients.</strong> Be sure
-to require authorization in order to access the configured &ldquo;publish&rdquo; path to
-prevent rogue publishers from dispatching unexpected content to clients or
-flooding the subscription channels.</p></div>
-
-<h2>Basic Syntax</h2>
-
-<p>The basic pubsub directive lets you specify a &ldquo;publish&rdquo; path and a
-corresponding &ldquo;subscribe&rdquo; path. This directive can be repeated. Each pubsub
-block is managed by its own longpoll instance so categories are effectively
-scoped by directive.</p>
-
-<div class="syntax"><p><span class="key">pubsub</span> <span class="subkey">publish_path</span> <span class="subkey">subscribe_path</span></p></div>
-
+<p>Additionally, this plugin provides a simple web-based interface to publish events, so any software capable of posting content to the Caddy server, such as wget and web browsers, can dispatch information to listening clients. This flexibility allows short-lived applications, such as crontab scripts and CGI scripts, to publish events that are of interest to subscribing web clients.</p>
+<p>On the downside, longpoll connections are one-direction only. Published events flow only from the server to clients. However, because of this plugin’s simple publishing interface, a web client that receives an event can immediately publish its own response.</p>
+<h2 id="security-considerations">Security Considerations</h2>
+<p>As with websockets, longpolling requires special care to protect both the server and all connected clients.</p>
+<div class="warning">
+<p><strong>Longpolling consumes resources on the server.</strong> Too many connections to clients can impact server operations. It is important to protect the configured “subscribe” path with some form of authentication such as <a href="https://caddyserver.com/docs/basicauth">basic authentication</a> or <a href="https://github.com/BTBurke/caddy-jwt">JWT</a> in order to manage the number of connections that your system will maintain. Be sure to use HTTPS!</p>
+</div>
+<div class="warning">
+<p><strong>Published events can instantly reach a large number of clients.</strong> Be sure to require authorization in order to access the configured “publish” path to prevent rogue publishers from dispatching unexpected content to clients or flooding the subscription channels.</p>
+</div>
+<h2 id="basic-syntax">Basic Syntax</h2>
+<p>The basic pubsub directive lets you specify a “publish” path and a corresponding “subscribe” path. This directive can be repeated. Each pubsub block is managed by its own longpoll instance so categories are effectively scoped by directive.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode caddy"><code class="sourceCode caddy"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">pubsub</span> publish_path subscribe_path</a></code></pre></div>
 <p>For example:</p>
-
-<pre><code>pubsub /chat/publish /chat/subscribe
-</code></pre>
-
+<div class="sourceCode" id="cb2"><pre class="sourceCode caddy"><code class="sourceCode caddy"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">pubsub</span> /chat/publish /chat/subscribe</a></code></pre></div>
 <p>The specified paths are virtual; they do not refer to any filesystem resources.</p>
-
-<h3>Publishing</h3>
-
-<p>When the Caddy server receives a call that matches the publish_path URL, the
-pubsub plugin responds by checking the request for the url-encoded form fields
-&ldquo;category&rdquo; and &ldquo;body&rdquo;. If these form values are sent to the server in a POST
-request rather than included in the tail of the URL in a GET request, the
-Content-Type must be &ldquo;application/x-www-form-urlencoded&rdquo;. The body value is
-then dispatched verbatim to all clients that are currently subscribed to the
-specified category. Structured data is easily dispatched by sending a
-JSON-encoded value.</p>
-
+<h3 id="publishing">Publishing</h3>
+<p>When the Caddy server receives a call that matches the publish_path URL, the pubsub plugin responds by checking the request for the url-encoded form fields “category” and “body”. If these form values are sent to the server in a POST request rather than included in the tail of the URL in a GET request, the Content-Type must be “application/x-www-form-urlencoded”. The body value is then dispatched verbatim to all clients that are currently subscribed to the specified category. Structured data is easily dispatched by sending a JSON-encoded value.</p>
 <p>At its simplest, a publish call might look like</p>
-
-<pre><code>https://example.com/chat/publish?category=team&amp;body=Hello%20world
-</code></pre>
-
-<p>In this example, the body &ldquo;Hello world&rdquo; is dispatched to all subscribers of the
-&ldquo;team&rdquo; category.</p>
-
-<h3>Subscribing</h3>
-
-<p>When the Caddy server receives a call that matches the subscribe_path URL, the
-pubsub plugin keeps the connection alive until a publication event of the
-correct category is returned or the configured time limit is reached. In either
-case, the client then makes another similar request of the server. This cycle
-continues until the client page is dismissed. When the longpoll instance
-detects that the client is no longer responsive it gracefully drops the client
-from its subscription list.</p>
-
-<h2>Advanced Syntax</h2>
-
-<p>The basic syntax shown above is likely all you will need to configure the
-pubsub plugin. If some control over the underlying golongpoll package is
-needed, you can use all or part of the advanced syntax shown here.</p>
-
-<div class="syntax"><p><span class="key">pubsub</span> <span class="subkey">publish_path</span> <span class="subkey">subscribe_path</span> {
- <span class="key">MaxLongpollTimeoutSeconds</span> <span class="subkey">timeout</span>
- <span class="key">MaxEventBufferSize</span> <span class="subkey">count</span>
- <span class="key">EventTimeToLiveSeconds</span> <span class="subkey">timeout</span>
- <span class="key">DeleteEventAfterFirstRetrieval</span>
-}</p></div>
-
-<p>Any missing fields are replaced with their default values; see the
-<a href="https://godoc.org/github.com/jcuga/golongpoll">golongpoll documentation</a> for more details.</p>
-
-<p>The <code>MaxLongpollTimeoutSeconds</code> subdirective specifies the maximum number of
-seconds that the longpoll server will keep a client connection alive.</p>
-
-<p>The <code>MaxEventBufferSize</code> subdirective specifies the maximum number of events of
-a particular category that will be kept by the longpoll server. Beyond this
-limit, events will be dropped even if they have not expired.</p>
-
-<p>The <code>EventTimeToLiveSeconds</code> subdirective specifies how long events will be
-retained by the longpoll server.</p>
-
-<p>If the <code>DeleteEventAfterFirstRetrieval</code> subdirective is present then events
-will be deleted right after they have been dispatched to current subscribers.</p>
-
-<h2>Running the example</h2>
-
+<pre class="shell"><code>https://example.com/chat/publish?category=team&amp;body=Hello%20world</code></pre>
+<p>In this example, the body “Hello world” is dispatched to all subscribers of the “team” category.</p>
+<h3 id="subscribing">Subscribing</h3>
+<p>When the Caddy server receives a call that matches the subscribe_path URL, the pubsub plugin keeps the connection alive until a publication event of the correct category is returned or the configured time limit is reached. In either case, the client then makes another similar request of the server. This cycle continues until the client page is dismissed. When the longpoll instance detects that the client is no longer responsive it gracefully drops the client from its subscription list.</p>
+<h2 id="advanced-syntax">Advanced Syntax</h2>
+<p>The basic syntax shown above is likely all you will need to configure the pubsub plugin. If some control over the underlying golongpoll package is needed, you can use all or part of the advanced syntax shown here.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode caddy"><code class="sourceCode caddy"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">pubsub</span> publish_path subscribe_path {</a>
+<a class="sourceLine" id="cb4-2" title="2">    <span class="kw">MaxLongpollTimeoutSeconds</span> timeout</a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="kw">MaxEventBufferSize</span> count</a>
+<a class="sourceLine" id="cb4-4" title="4">    <span class="kw">EventTimeToLiveSeconds</span> timeout</a>
+<a class="sourceLine" id="cb4-5" title="5">    <span class="kw">DeleteEventAfterFirstRetrieval</span></a>
+<a class="sourceLine" id="cb4-6" title="6">}</a></code></pre></div>
+<p>Any missing fields are replaced with their default values; see the <a href="https://godoc.org/github.com/jcuga/golongpoll">golongpoll documentation</a> for more details.</p>
+<p>The <span class="key">MaxLongpollTimeoutSeconds</span> subdirective specifies the maximum number of seconds that the longpoll server will keep a client connection alive.</p>
+<p>The <span class="key">MaxEventBufferSize</span> subdirective specifies the maximum number of events of a particular category that will be kept by the longpoll server. Beyond this limit, events will be dropped even if they have not expired.</p>
+<p>The <span class="key">EventTimeToLiveSeconds</span> subdirective specifies how long events will be retained by the longpoll server.</p>
+<p>If the <span class="key">DeleteEventAfterFirstRetrieval</span> subdirective is present then events will be deleted right after they have been dispatched to current subscribers.</p>
+<h2 id="running-the-example">Running the example</h2>
 <p>Here is a sample Caddyfile that can be modified for use in the following example:</p>
-
-<pre><code>http://127.0.0.1 {
-    bind 127.0.0.1
-    basicauth /psdemo/publish publish 123
-    basicauth /psdemo/subscribe subscribe 123
-    pubsub /psdemo/publish /psdemo/subscribe
-}
-</code></pre>
-
+<div class="sourceCode" id="cb5"><pre class="sourceCode caddy"><code class="sourceCode caddy"><a class="sourceLine" id="cb5-1" title="1">http://<span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span> {</a>
+<a class="sourceLine" id="cb5-2" title="2">    <span class="kw">bind</span> <span class="dv">127</span>.<span class="dv">0</span>.<span class="fl">0.1</span></a>
+<a class="sourceLine" id="cb5-3" title="3">    <span class="kw">basicauth</span> /psdemo/publish publish <span class="dv">123</span></a>
+<a class="sourceLine" id="cb5-4" title="4">    <span class="kw">basicauth</span> /psdemo/subscribe subscribe <span class="dv">123</span></a>
+<a class="sourceLine" id="cb5-5" title="5">    <span class="kw">pubsub</span> /psdemo/publish /psdemo/subscribe</a>
+<a class="sourceLine" id="cb5-6" title="6">}</a></code></pre></div>
 <ul>
 <li><p>Obtain or build a Caddy web server with the pubsub plugin.</p></li>
-<li><p>Create an example directory and download the files in the repository
-<a href="https://github.com/jung-kurt/caddy-pubsub/tree/master/example">example</a> directory to it. Make this your default working directory.</p></li>
-<li><p>Edit the file named Caddyfile. Modify the site address to an
-appropriate local network address. Ideally, you will use an address that can be
-accessed from a number of devices on your network. (A local interface, such as
-127.0.0.5, will work, but then you will have to simulate multiple devices by
-opening multiple tabs in your browser.) You may wish to use a non-standard port
-if you need to avoid interfering with another server. HTTP is used here for the
-purposes of a local, insecure demonstration. <strong>Use HTTPS in production.</strong> The
-Caddyfile has values for the authorization fields and paths that are used as
-defaults in the example script, so leaving them as they are will simplify the
-demonstration.</p></li>
-<li><p>Launch the Caddy web server from the directory that contains your example
-Caddyfile. The command might be simply <code>caddy</code> or, if the caddy executable you
-wish to run is not on the default search path, you will need to qualify the
-name with its location.</p></li>
-<li><p>Access the server with the web browsers of a number of devices.
-Alternatively, open a number of tabs in a single browser and point them to the
-server.</p></li>
-<li><p>On each open page, click the &ldquo;Configure&rdquo; button and make appropriate changes.
-Most fields, such as &ldquo;Auth password&rdquo; and &ldquo;URL&rdquo; are pre-filled to match the
-values in the sample Caddyfile. You may enter a name in the &ldquo;Publisher name&rdquo;
-field or leave it empty. A blank value will be replaced with a random name like
-&ldquo;user_42&rdquo; the first time you publish an event.</p></li>
-<li><p>On each open page, click the &ldquo;Run&rdquo; button and then the &ldquo;Start&rdquo; button.
-Simulate the publication of events by clicking the &ldquo;A&rdquo;, &ldquo;B&rdquo;, and &ldquo;C&rdquo; buttons
-from various devices or tab pages. Additionally, you may click the &ldquo;Auto start&rdquo;
-button. This will begin an automatic sequence in which an event is published at
-random intervals. Published events will be sent to the web server and
-dispatched to all subscribing pages. These events will be displayed beneath the
-buttons in a list. A page can publish events even if it does not subscribe to
-them.</p></li>
+<li><p>Create an example directory and download the files in the repository <a href="https://github.com/jung-kurt/caddy-pubsub/tree/master/example">example</a> directory to it. Make this your default working directory.</p></li>
+<li><p>Edit the file named Caddyfile. Modify the site address to an appropriate local network address. Ideally, you will use an address that can be accessed from a number of devices on your network. (A local interface, such as 127.0.0.5, will work, but then you will have to simulate multiple devices by opening multiple tabs in your browser.) You may wish to use a non-standard port if you need to avoid interfering with another server. HTTP is used here for the purposes of a local, insecure demonstration. <strong>Use HTTPS in production.</strong> The Caddyfile has values for the authorization fields and paths that are used as defaults in the example script, so leaving them as they are will simplify the demonstration.</p></li>
+<li><p>Launch the Caddy web server from the directory that contains your example Caddyfile. The command might be simply <code>caddy</code> or, if the caddy executable you wish to run is not on the default search path, you will need to qualify the name with its location.</p></li>
+<li><p>Access the server with the web browsers of a number of devices. Alternatively, open a number of tabs in a single browser and point them to the server.</p></li>
+<li><p>On each open page, click the “Configure” button and make appropriate changes. Most fields, such as “Auth password” and “URL” are pre-filled to match the values in the sample Caddyfile. You may enter a name in the “Publisher name” field or leave it empty. A blank value will be replaced with a random name like “user_42” the first time you publish an event.</p></li>
+<li><p>On each open page, click the “Run” button and then the “Start” button. Simulate the publication of events by clicking the “A”, “B”, and “C” buttons from various devices or tab pages. Additionally, you may click the “Auto start” button. This will begin an automatic sequence in which an event is published at random intervals. Published events will be sent to the web server and dispatched to all subscribing pages. These events will be displayed beneath the buttons in a list. A page can publish events even if it does not subscribe to them.</p></li>
 </ul>
-
-
-<h2>Using pubsub in your own web applications</h2>
-
-<p>The JavaScript file ps.js is included in the example shown above. This script
-may be included in a web page with the following line:</p>
-
-<pre><code>&lt;script src="ps.js"&gt;&lt;/script&gt;
-</code></pre>
-
-<p>The script is small and dependency-free and should be easy to modify if needed.
-Within your application code, instantiate a Subscriber instance as follows:</p>
-
-<pre><code>subscribe = ps.Subscriber(category, url, callback, authorization, options);
-</code></pre>
-
+<h2 id="using-pubsub-in-your-own-web-applications">Using pubsub in your own web applications</h2>
+<p>The JavaScript file ps.js is included in the example shown above. This script may be included in a web page with the following line:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode html"><code class="sourceCode html"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">&lt;script</span><span class="ot"> src=</span><span class="st">&quot;ps.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span></a></code></pre></div>
+<p>The script is small and dependency-free and should be easy to modify if needed. Within your application code, instantiate a Subscriber instance as follows:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb7-1" title="1">subscribe <span class="op">=</span> <span class="va">ps</span>.<span class="at">Subscriber</span>(category<span class="op">,</span> url<span class="op">,</span> callback<span class="op">,</span> authorization<span class="op">,</span> options)<span class="op">;</span></a></code></pre></div>
 <p>The parameters are:</p>
-
 <ul>
-<li><p><strong>category</strong>: a short string that identifies the event category to which to
-subscribe</p></li>
-<li><p><strong>url</strong>: the subscribe_path configured in the Caddyfile (in the example above,
-this is &ldquo;/psdemo/subscribe&rdquo;)</p></li>
-<li><p><strong>callback</strong>: this is a function that is called (with the published body and
-server timestamp) for each event of the specified category</p></li>
-<li><p><strong>authorization</strong>: a string like &ldquo;Basic c3Vic2NyaWJlOjEyMw==&rdquo; that will be
-sent as an authorization header.</p></li>
-<li><p><strong>options</strong>: an object that contains the fields
-<strong>timeout</strong> (seconds, default 45),
-<strong>successDelay</strong> (milliseconds, default 10),
-<strong>errorDelay</strong> (milliseconds, default 3000), and
-<strong>json</strong> (boolean, true if event bodies are JSON-encoded and
-should be automatically decoded, default false).</p></li>
+<li><p><span class="key">category</span>: a short string that identifies the event category to which to subscribe</p></li>
+<li><p><span class="key">url</span>: the subscribe_path configured in the Caddyfile (in the example above, this is “/psdemo/subscribe”)</p></li>
+<li><p><span class="key">callback</span>: this is a function that is called (with the published body and server timestamp) for each event of the specified category</p></li>
+<li><p><span class="key">authorization</span>: a string like “Basic c3Vic2NyaWJlOjEyMw==” that will be sent as an authorization header.</p></li>
+<li><p><span class="key">options</span>: an object that contains the fields <span class="key">timeout</span> (seconds, default 45), <span class="key">successDelay</span> (milliseconds, default 10), <span class="key">errorDelay</span> (milliseconds, default 3000), and <span class="key">json</span> (boolean, true if event bodies are JSON-encoded and should be automatically decoded, default false).</p></li>
 </ul>
-
-
 <p>More details can be found in the comments in the ps.js file.</p>
-
 <p>To start the subscription, call</p>
-
-<pre><code>subscribe.start();
-</code></pre>
-
+<div class="sourceCode" id="cb8"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb8-1" title="1"><span class="va">subscribe</span>.<span class="at">start</span>()<span class="op">;</span></a></code></pre></div>
 <p>To end the subscription, call</p>
-
-<pre><code>subscribe.stop();
-</code></pre>
-
+<div class="sourceCode" id="cb9"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb9-1" title="1"><span class="va">subscribe</span>.<span class="at">stop</span>()<span class="op">;</span></a></code></pre></div>
 <p>Publish an event as follows:</p>
-
-<pre><code>ps.publish(category, url, body, authorization);
-</code></pre>
-
+<div class="sourceCode" id="cb10"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb10-1" title="1"><span class="va">ps</span>.<span class="at">publish</span>(category<span class="op">,</span> url<span class="op">,</span> body<span class="op">,</span> authorization)<span class="op">;</span></a></code></pre></div>
 <p>The parameters are:</p>
-
 <ul>
-<li><p><strong>category</strong>: a short string that identifies the event category of the
-published event</p></li>
-<li><p><strong>url</strong>: the publish_path configured in the Caddyfile (in the example above,
-this is &ldquo;/psdemo/publish&rdquo;)</p></li>
-<li><p><strong>body</strong>: this is the text that will be dispatched to all subscribers of
-events with the specified category; this text is often a JSON-encoded object</p></li>
-<li><p><strong>authorization</strong>: a string like &ldquo;Basic cHVibGlzaDoxMjM=&rdquo; that will be sent
-as an authorization header.</p></li>
+<li><p><span class="key">category</span>: a short string that identifies the event category of the published event</p></li>
+<li><p><span class="key">url</span>: the publish_path configured in the Caddyfile (in the example above, this is “/psdemo/publish”)</p></li>
+<li><p><span class="key">body</span>: this is the text that will be dispatched to all subscribers of events with the specified category; this text is often a JSON-encoded object</p></li>
+<li><p><span class="key">authorization</span>: a string like “Basic cHVibGlzaDoxMjM=” that will be sent as an authorization header.</p></li>
 </ul>
-
-
 <p>A variation of the <code>ps.publish()</code> function is</p>
-
-<pre><code>ps.publishObj(category, url, body, authorization);
-</code></pre>
-
-<p>In this case, body can be any JSON-encodable value such as an array or an
-object. When subscribing to events that are published this way, it is
-convenient to set the &ldquo;json&rdquo; field of the options argument of <code>ps.Subscriber()</code>
-to true so that the event body is automatically decoded.</p>
-	</body>
+<div class="sourceCode" id="cb11"><pre class="sourceCode javascript"><code class="sourceCode javascript"><a class="sourceLine" id="cb11-1" title="1"><span class="va">ps</span>.<span class="at">publishObj</span>(category<span class="op">,</span> url<span class="op">,</span> body<span class="op">,</span> authorization)<span class="op">;</span></a></code></pre></div>
+<p>In this case, body can be any JSON-encodable value such as an array or an object. When subscribing to events that are published this way, it is convenient to set the “json” field of the options argument of <code>ps.Subscriber()</code> to true so that the event body is automatically decoded.</p>
+</body>
 
 </html>
