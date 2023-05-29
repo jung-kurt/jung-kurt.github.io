@@ -1,0 +1,22 @@
+{
+  "short_name": "Minimal PWA",
+  "name": "Minimal PWA",
+  "icons": [
+    {
+      "src": "min-pwa.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "min-pwa.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/pwa/",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/pwa/",
+  "theme_color": "#FFFFFF"
+}

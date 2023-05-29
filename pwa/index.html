@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <title>Minimal PWA</title>
+    <link rel="apple-touch-icon" href="min-pwa-192.png">
+    <meta name="theme-color" content="#404040" />
+    <meta content="Minimal progressive web app" name="Description" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <link rel="manifest" href="/pwa/manifest.json">
+    <link rel="icon" href="favicon.ico">
+    <link href="index.css" rel="stylesheet" />
+    <script src="index.js" defer></script>
+  </head>
+
+  <body>
+
+    <noscript>
+
+      <p>Javascript needs to be enabled for this application to function properly.</p>
+
+    </noscript>
+
+    <div data-main>
+
+      <div data-page="/" style="display:none;">
+
+        <h1>Minimal PWA</h1>
+
+        <div>
+
+          <p>
+          This minimal project can be used as a starting point to build a
+          progressive web application (PWA). This particular project
+          </p>
+
+          <ul>
+
+            <li>
+            does not communicate with any server except to retreive updated
+            static resources, consequently it can be hosted on a static web
+            server
+            </li>
+
+            <li>
+            uses vanilla JavaScript instead of third-party frameworks
+            </li>
+
+            <li>
+            demonstrates the use of dialogs to read and write data on the
+            user's own computer; with this application, <strong>your
+            information never leaves your computer</strong>
+            </li>
+
+            <li>
+            can be installed as a PWA for off-line use
+            </li>
+
+            <li>
+            uses a classless stylesheet to keep the HTML as clean as possible
+            </li>
+
+            <li>
+            includes a bunch of JavaScript helper routines, such as a recursive
+            node creator for simple and safe templating
+            </li>
+
+            <li>
+            conforms with ECMAScript 3 (1999) so it can be run on older
+            devices, although in that case not as a PWA
+            </li>
+
+          </ul>
+
+          <p>
+          To keep this project small and avoid tooling that can be confusing
+          for someone starting out with web apps, it forgoes a lot of
+          nice-to-have features such as
+          </p>
+
+          <ul>
+
+            <li>
+            page stack history
+            </li>
+
+            <li>
+            automatic generation of navigation breadcrumbs
+            </li>
+
+            <li>
+            page routing, for example "/page/42/edit", although pages can be
+            displayed with static arguments to provide context
+            </li>
+
+            <li>
+            caching of DOM elements for fast lookup by name
+            </li>
+
+            <li>
+            a makefile and other project build tools, for example, asset
+            minifier, source code linter, cache version updater, and server
+            synchronization script
+            </li>
+
+          </ul>
+
+        </div>
+
+        <p>
+          <button data-show="/page/1">HTML examples</button>
+          <button data-show="/page/2">Page 2</button>
+          <button data-show="/page/3|home page|0">Page 3</button>
+          <button data-show="/help">Help</button>
+        </p>
+
+      </div>
+
+      <div data-page="/page/1" style="display:none;">
+
+        <h1>HTML examples</h1>
+
+        <p>
+        This page demonstrates various HTML elements.
+        </p>
+
+        <h2>Code block</h2>
+
+        <p>
+        Here is a code block with a wide ruler that can be helpful to see how
+        much horizontal and vertical space a certain amount of code consumes.
+        It also demonstrates horizontal scrolling which in most circumstances
+        should be avoided.
+        </p>
+
+        <pre>
+<code>1---5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100--105--110--115--120--125--130--135--140--145--150--155--160--165--170--175--180--185--190--195--200--205--210--215--220--225--230--235--240--245--250--255--260--265--270--275--280--285--290--295--300
+2
+3
+4
+5
+6
+7
+8</code></pre>
+
+        <h2>Figure</h2>
+
+        <p>
+        This section demonstrates an image nested within a figure element that
+        includes a caption.
+        </p>
+
+        <figure>
+          <a href="/pwa/min-pwa.png"><img src="/pwa/min-pwa.png" alt="Minimal PWA"></a>
+          <figcaption>
+            Minimal PWA
+          </figcaption>
+        </figure>
+
+        <h2>Form</h2>
+
+        <p>
+        This block demonstrates a simple form. On narrow displays, the email
+        and day of week input fields are shown on separate lines while on wider
+        displays the input fields appear on a single row.
+        </p>
+
+        <form>
+
+          <div>
+            <label>Email
+              <input type="email" placeholder="don.quixote@example.com">
+            </label>
+            <label>Day of week
+              <select>
+                <optgroup label="Work week">
+                  <option value="mon" selected="selected">Monday</option>
+                  <option value="tue">Tuesday</option>
+                  <option value="wed">Wednesday</option>
+                  <option value="thu">Thursday</option>
+                  <option value="fri">Friday</option>
+                </optgroup>
+                <optgroup label="Weekend">
+                  <option value="sat">Saturday</option>
+                  <option value="sun">Sunday</option>
+                </optgroup>
+              </select>
+            </label>
+          </div>
+
+          <div>
+            <label>Message
+              <textarea placeholder="&lt;M&gt;&amp;&lt;M&gt;'s are &quot;awesome&quot;"></textarea>
+            </label>
+          </div>
+
+          <div>
+            <label>
+              <input type="checkbox">
+              <span>Add to calendar</span>
+            </label>
+          </div>
+
+          <div class="f6">
+            <label>
+              <input type="radio" name="season" value="winter">
+              Winter
+            </label>
+            <label>
+              <input type="radio" name="season" checked="checked" value="spring">
+              Spring
+            </label>
+            <label>
+              <input type="radio" name="season" value="summer">
+              Summer
+            </label>
+            <label>
+              <input type="radio" name="season" value="autumn">
+              Autumn
+            </label>
+          </div>
+
+        </form>
+
+        <h2>Table</h2>
+
+        <p>
+        This section shows an example of an HTML table. In general, tables
+        provide a horrible experience on mobile devices unless few narrow
+        columns are used. It is almost always preferable to structure
+        information so that record fields can be displayed in a single column.
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Editor</th>
+              <th>Creator</th>
+              <th>License</th>
+              <th>First Release</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>GNU Emacs</td>
+              <td>Richard Stallman</td>
+              <td>GNU GPLv3+</td>
+              <td>20 Mar 1985</td>
+            </tr>
+            <tr>
+              <td>Vim</td>
+              <td>Bram Moolenaar</td>
+              <td>Vim License</td>
+              <td>02 Nov 1991</td>
+            </tr>
+            <tr>
+              <td>GNU nano</td>
+              <td>Chris Allegretta</td>
+              <td>GNU GPLv3</td>
+              <td>18 Nov 1999</td>
+            </tr>
+            <tr>
+              <td>Notepad++</td>
+              <td>Don Ho</td>
+              <td>GNU GPLv2</td>
+              <td>24 Nov 2003</td>
+            </tr>
+            <tr>
+              <td>Atom</td>
+              <td>GitHub</td>
+              <td>MIT</td>
+              <td>26 Feb 2014</td>
+            </tr>
+            <tr>
+              <td>Visual Studio Code</td>
+              <td>Microsoft</td>
+              <td>MIT</td>
+              <td>29 Apr 2015</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          <button data-show="/">Home</button>
+          <button data-show="/page/2">Page 2</button>
+          <button data-show="/page/3|page one|1">Page 3</button>
+          <button data-show="/help">Help</button>
+        </p>
+
+      </div>
+
+      <div data-page="/page/2" style="display:none;">
+
+        <h1>Page 2</h1>
+
+        <p>
+        This page was displayed at <span data-name="time-load">.</span>.
+        </p>
+
+        <p>
+          <button data-show="/">Home</button>
+          <button data-show="/page/1">HTML examples</button>
+          <button data-show="/page/3|page two|2">Page 3</button>
+          <button data-show="/help">Help</button>
+        </p>
+
+      </div>
+
+      <div data-page="/page/3" style="display:none;">
+
+        <h1>Page 3</h1>
+
+        <p>
+        This is page 3. Previous page was <span data-name="previous">.</span>.
+        </p>
+
+        <div id="test"> </div>
+
+        <p>Tally is <b id="tally">0</b>.</p>
+
+        <p>
+          <button data-action="inc|2">Increment by 2</button>
+          <button data-action="inc|3">Increment by 3</button>
+          <button data-action="inc|-4">Decrement by 4</button>
+        </p>
+
+        <p>
+          <button data-show="/">Home</button>
+          <button data-show="/page/1">HTML examples</button>
+          <button data-show="/page/2">Page 2</button>
+          <button data-show="/help">Help</button>
+        </p>
+
+      </div>
+
+      <div data-page="/help" style="display:none;">
+
+        <h1>Minimal PWA Help</h1>
+
+        <details>
+
+          <summary>Development</summary>
+
+          <h2>Program structure</h2>
+
+          <p>
+          The technique shown in this project is to use a single HTML page that
+          has multiple div blocks that are siblings to one another. The
+          pageShow() function lets you easily show one at a time. The
+          disadvantage of this scheme is that pages cannot be nested.
+          </p>
+
+          <h2>PWA considerations</h2>
+
+          <p>
+          This project can function as a normal web application without tapping
+          into the benefits of an installed PWA. The presence of the
+          manifest.json file, the service-worker.js file, and the call to
+          navigator.serviceWorker.register() function are what make it
+          installable as a PWA.
+          </p>
+
+          <h3>manifest.json</h3>
+
+          <p>
+          The manifest.json file and the icon that it references are typically
+          prepared at the beginning of a project and are only infrequently
+          modified after that. On the topic of icons, a good article is <a
+          href="https://web.dev/maskable-icon/">Adaptive icon support in
+          PWAs</a> for details about maskable icons with PWAs.
+          </p>
+
+          <h3>service-worker.js</h3>
+
+          <p>
+          The service-worker.js file is basically boilerplate except for a
+          couple of lines. This file implements the strategy the application
+          will use to fetch resources from the host server, which incidentally
+          can be a static web server. Think of a service worker as a little
+          local web server that your app will contact to retreive resources. If
+          a resource is available in the local cache, the service worked will
+          deliver that. If a resource is not available, it will contact the
+          host server to get it. In this project, an "offline first" strategy
+          is used. Only after the app is running will it check for updated
+          resources on the server.
+          </p>
+
+          <p>
+          The parts of the service-worker.js file that do need to be modified
+          regularly are the <code>version</code> and <code>cacheAssets</code>
+          constants. In this project, the version is simply the UTC timestamp
+          at the time of deployment. This gets updated with a small script that
+          sets the value when the resources are synchronized with the host
+          server. The cache assets are the files that need to be cached to
+          function offline. This line needs to be updated only when resources
+          are added or removed from the project, in general not too often.
+          </p>
+
+          <h2>Styling</h2>
+
+          <p>
+          A lot of apps use stylesheet classes extensively. This project does
+          the opposite. It is based on <a
+          href="https://github.com/susam/spcss">SPCSS</a> that serves to make
+          the HTML as simple as possible. When the application does need to use
+          a custom style, try to make use of the HTML's structure in order to
+          minimize the number of elements that need to assign the class
+          specificially. For example, rather than apply a class (for example,
+          <code>class="record"</code>) to a number of repeating elements, it
+          might be a lot simpler to instead apply a class (for example,
+          <code>class="record-container"</code> to the parent of the repeating
+          elements. In this example, the style might look like
+          <code>.record-container > div { ... }</code>).
+          </p>
+
+        </details>
+
+        <details>
+
+          <summary>Lorem ipsum dolor sit amet</summary>
+
+          <p>
+          <b>Lorem ipsum dolor sit amet</b>, consectetur adipiscing elit. Ut elit
+          tortor, pellentesque gravida nisl ut, varius eleifend tellus. Sed in
+          gravida eros, quis luctus diam. Quisque nec varius massa, semper
+          vehicula nunc. Phasellus eu auctor nisi. Praesent sollicitudin
+          fringilla risus at imperdiet. Mauris hendrerit sit amet nisl eget
+          pretium. Cras id diam vulputate, vestibulum nunc ac, volutpat mauris.
+          Phasellus eu lorem interdum, euismod arcu at, pharetra justo. Morbi
+          in ultricies orci, nec convallis ante. Maecenas viverra faucibus
+          tincidunt. Curabitur vel auctor eros. Suspendisse sed venenatis est,
+          eget viverra massa.
+          </p>
+
+        </details>
+
+        <details>
+
+          <summary>Sed tincidunt</summary>
+
+          <p>
+          <b>Sed tincidunt, magna sit amet iaculis maximus</b>, justo sapien dictum
+          risus, eget eleifend odio orci vel quam. Fusce finibus, sapien sed
+          sollicitudin semper, sem justo euismod nisi, et auctor eros eros et
+          nisi. Aenean quis consequat leo. Aliquam erat augue, mattis maximus
+          nisl sit amet, molestie gravida turpis. Sed dapibus aliquam urna quis
+          dignissim. In pharetra eros in laoreet elementum. Duis ac hendrerit
+          mauris, nec mollis ex. Cras in lorem ac orci tincidunt luctus. Donec
+          vestibulum rhoncus placerat. Morbi sed tincidunt tortor. Sed nisl
+          dolor, lacinia vitae sem in, elementum molestie felis. Vestibulum
+          convallis ante odio, ac luctus est egestas vestibulum. Phasellus ac
+          neque massa. Quisque euismod erat nec quam suscipit, non venenatis
+          ipsum molestie. Mauris ac semper arcu. Maecenas tincidunt dapibus
+          lorem, sed blandit justo tempor at.
+          </p>
+
+        </details>
+
+        <details>
+
+          <summary>Ut vitae aliquet augue</summary>
+
+          <p>
+          <b>Ut vitae aliquet augue.</b> Etiam ut urna faucibus magna sodales ornare.
+          Aenean in eros ligula. Sed imperdiet nulla id nisl laoreet tincidunt.
+          Donec porta felis ipsum, et sagittis nisl luctus a. Nullam sed neque
+          scelerisque, faucibus nisi vel, rutrum tellus. Sed id tortor eu diam
+          consequat venenatis. Fusce vehicula nunc at rhoncus tempor. Fusce
+          sagittis lectus libero, ac egestas magna ornare finibus. Class aptent
+          taciti sociosqu ad litora torquent per conubia nostra, per inceptos
+          himenaeos. Sed id sollicitudin odio.
+          </p>
+
+        </details>
+
+        <details>
+
+          <summary>Mauris sagittis aliquet ligula</summary>
+
+          <p>
+          <b>Mauris sagittis aliquet ligula</b>, non aliquet enim tempor vel. Nunc
+          pharetra quam vestibulum libero consectetur, id eleifend ligula
+          cursus. Pellentesque in justo egestas, dictum odio sit amet,
+          sollicitudin leo. In hac habitasse platea dictumst. Ut faucibus nibh
+          tortor, non sodales urna molestie ut. Aenean ultricies nec magna
+          rhoncus pharetra. Duis pretium vitae libero semper luctus. Praesent
+          placerat turpis ut ligula lacinia sollicitudin. Donec aliquam augue
+          id tincidunt feugiat. Class aptent taciti sociosqu ad litora torquent
+          per conubia nostra, per inceptos himenaeos. Duis porttitor ornare
+          eleifend. Quisque condimentum ultricies diam rutrum viverra. Nam sit
+          amet nisl sit amet nisl eleifend dignissim id eget ex. Mauris sit
+          amet dolor a augue mattis finibus. Vestibulum eu venenatis nisi.
+          </p>
+
+        </details>
+
+        <details>
+
+          <summary>Maecenas cursus</summary>
+
+          <p>
+          <b>Maecenas cursus non elit quis tincidunt.</b> Vestibulum eget interdum
+          dui, elementum elementum nisl. Integer tincidunt pretium eleifend.
+          Nam venenatis, sem sed hendrerit rhoncus, enim nunc tincidunt massa,
+          ac sollicitudin elit est ac libero. Vivamus eu laoreet est. Vivamus
+          molestie vehicula nunc ac cursus. Sed nisi felis, porttitor eget
+          interdum nec, eleifend sit amet ante.
+          </p>
+
+        </details>
+
+        <p>
+          <button data-show="/">Home</button>
+          <button data-show="/page/1">HTML examples</button>
+          <button data-show="/page/2">Page 2</button>
+          <button data-show="/page/3|help page|0">Page 3</button>
+        </p>
+
+      </div>
+
+    </div>
+
+    <datalist id="transactees">
+    </datalist>
+
+  </body>
+
+</html>
