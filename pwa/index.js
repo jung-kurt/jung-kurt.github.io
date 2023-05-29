@@ -1,3 +1,10 @@
+// This file contains both application-specific code and utility helper
+// routines. In general, this code would be organized in separate files and
+// then amalgamated and minified in a deployment phase. In order to simplify
+// the process of building a PWA, in this case everything is kept in one file.
+// All code that pertains to the application is confined to the Application
+// object.
+
 var bankShow, Application, queryElement, formSet, formGet, formInputs, html,
   removeAllChildren, elGet, setChild, setText, listenClick;
 
@@ -16,7 +23,6 @@ var bankShow, Application, queryElement, formSet, formGet, formInputs, html,
 //
 // If this button is clicked, then fncShow('/page/one', ['active', 'sum']) is
 // called.
-
 listenClick = function(handlers) {
   // The click handler is set at the document level, rather than on the
   // initiator, to avoid garbage collection issues with event handlers.
@@ -84,6 +90,9 @@ bankShow = function(el, rel) {
   }
 };
 
+// This function returns a list of all input fields in the specified form that
+// have the data-name attribute set. The return value is null if the form
+// cannot be found.
 formInputs = function(formName) {
   var formEl, inpList;
 
@@ -152,7 +161,12 @@ formGet = function(formName) {
   return form;
 };
 
-// html() creates a DOM node.
+// This function creates a DOM element. It simplifies the task of generating
+// structured HTML. The first argument is a node type, eg, 'p' or 'a'. The
+// second argument is an object that specifies attributes to be applied to the
+// newly created element, eg, { href="/page/1" }. Subsequent arguments are
+// strings, elements or arrays of the same. In practice, calling html() as an
+// argument facilitates the construction of nested DOM elements.
 //
 // html('p', {}, 'Hello') ->
 // <p>Hello</p>
@@ -229,7 +243,7 @@ elGet = function(el) {
 
 // Replace all children of the element specified by parent with the element
 // specified by childEl. parent may be a selector string in which case the
-// first matching element is teated as the parent element.
+// first matching element is treated as the parent element.
 setChild = function(parent, childEl) {
   parent = elGet(parent);
   if (parent) {
