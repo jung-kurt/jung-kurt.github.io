@@ -120,6 +120,10 @@ formSet = function(formName, inputMap) {
         val = '';
       }
       switch (inpEl.getAttribute('type')) {
+        case 'number':
+          // Convert from number to string
+          inpEl.value = val.toFixed(2);
+          break;
         case 'radio':
         case 'checkbox':
           inpEl.checked = !!val; // convert to boolean
@@ -145,6 +149,10 @@ formGet = function(formName) {
       inpEl = inpList[j];
       key = inpEl.getAttribute('data-name');
       switch (inpEl.type) {
+        case 'number':
+          // Convert from string to number
+          val = Number(inpEl.value);
+          break;
         case 'file':
           val = inpEl;
           break;
@@ -270,10 +278,30 @@ removeAllChildren = function(el) {
   }
 };
 
+// Return a date object corresponding to current date plus dy days. dy should
+// be negative for past dates.
+daysAdd = function(dy) {
+  var dt;
+  dt = new Date();
+  dt.setTime(dt.getTime() + dy * 86400000); // Number of milliseconds per day
+  return dt;
+};
+
+// Return a standard date string (eg, '2006-01-02') corresponding to current
+// date plus dy. dy should be negative for past dates.
+strDaysAdd = function(dy) {
+  return strDateToStdStr(daysAdd(dy));
+};
+
+// Return '2006-01-02' from a JavaScript date.
+strDateToStdStr = function(dt) {
+  return '' + dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2);
+};
+
 // The Application object contains all application-specific functions and data.
 // Everything outside of is generic for all applications.
 Application = function() {
-  var thisApp, pageFnc, pageShow, action, tally, pageStk;
+  var thisApp, pageFnc, pageShow, action, tally, pageStk, sample;
 
   thisApp = this;
   tally = 0;
@@ -291,12 +319,53 @@ Application = function() {
   // page's content before it is shown.
   pageFnc = {};
 
+  // sample defines the principal data structure used in this application
+  sample = {
+    "name": "Bank of Whoville / Checking",
+    "balance_start": 0,
+    "rows": [
+      {
+        'date': '2022-09-01',
+        'transactee': 'Whoville Hardware',
+        'checknum': '4021',
+        'amount': 48,
+        'comment': 'Horseshoes and nails',
+        'reconciled': false,
+        'void': false
+      },
+      {
+        'date': '2022-09-01',
+        'transactee': 'Bank of Whoville',
+        'checknum': '',
+        'amount': 120.5,
+        'comment': 'Sale of alfalfa',
+        'reconciled': false,
+        'void': false
+      },
+      {
+        'date': '2022-09-01',
+        'transactee': 'Whoville Grains',
+        'checknum': '4022',
+        'amount': 27.5,
+        'comment': 'Rye seed',
+        'reconciled': false,
+        'void': false
+      }
+    ]
+  };
+
   pageFnc['/page/2'] = function(list) {
     var el;
     el = queryElement('data-name', 'time-load');
     if (el) {
       el.innerText = new Date().toString();
     }
+  };
+
+  pageFnc['/page/form'] = function(list) {
+    console.log('sample values', sample.rows[0]);
+    formSet('transaction', sample.rows[0]);
+    console.log('form values', formGet('transaction'));
   };
 
   pageFnc['/page/3'] = function(list) {
@@ -321,7 +390,6 @@ Application = function() {
         if (pageStk.length > 1) {
           pageStk.pop();
           pg = pageStk.pop();
-          console.log('return', pg);
           pageShow(pg.name, pg.list);
         }
         break;
@@ -329,7 +397,7 @@ Application = function() {
   };
 
   // Display the specified page and hide all of its siblings. If a pre-display
-  // function is defined for the page, show it before making it visible.
+  // function is defined for the page, show it before making the page visible.
   pageShow = function(name, list) {
     var fnc, j, popCount, el, show;
 
@@ -340,7 +408,7 @@ Application = function() {
         fnc(list);
       }
       // If the page to be shown is already on the page stack, truncate the
-      // remainder of the stack
+      // stack to that point
       for (popCount = 0, j = 0; (j < pageStk.length) && (0 === popCount); j++) {
         if (name === pageStk[j].name) {
           popCount = pageStk.length - j;

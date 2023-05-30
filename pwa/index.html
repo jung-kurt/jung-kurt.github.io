@@ -308,10 +308,50 @@
 
         <h1>Form</h1>
 
-        <p>
-          <button data-action="/form/save">Save</button>
-          <button data-action="/form/cancel">Cancel</button>
-        </p>
+        <form data-name="transaction">
+          <p>
+            <label>Date
+              <input type="date" data-name="date">
+            </label>
+          </p>
+          <p>
+            <label>Transactee
+              <input type="text" list="transactees" data-name="transactee" />
+            </label>
+          </p>
+          <p>
+            <label>Check #
+              <input type="text" data-name="checknum">
+            </label>
+          </p>
+          <p>
+            <label>Amount
+              <input type="number" step="0.01" data-name="amount">
+            </label>
+          </p>
+          <p>
+            Negative value indicates withdrawal.
+          </p>
+          <p>
+            <label>Comment
+              <textarea data-name="comment"></textarea>
+            </label>
+          </p>
+          <p class="f12">
+            <label>
+              <input data-name="reconciled" type="checkbox">
+              <span>Reconciled</span>
+            </label>
+            <label>
+              <input data-name="void" type="checkbox">
+              <span>Void</span>
+            </label>
+          </p>
+          <p>
+            <button data-action="/form/save">Save</button>
+            <button data-action="/form/cancel">Cancel</button>
+          </p>
+        </form>
 
       </div>
 
@@ -337,6 +377,7 @@
           <button data-show="/">Home</button>
           <button data-show="/page/1">HTML examples</button>
           <button data-show="/page/2">Page 2</button>
+          <button data-show="/page/form">Form</button>
           <button data-show="/help">Help</button>
         </p>
 
