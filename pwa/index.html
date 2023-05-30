@@ -4,7 +4,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <title>Minimal PWA</title>
+    <title>Let's Build a PWA</title>
     <link rel="apple-touch-icon" href="min-pwa.png">
     <meta name="theme-color" content="#404040" />
     <meta content="Minimal progressive web app" name="Description" />
@@ -27,7 +27,7 @@
 
       <div data-page="/" style="display:none;">
 
-        <h1>Minimal PWA</h1>
+        <h1>Let's Build a PWA</h1>
 
         <div>
 
@@ -308,6 +308,17 @@
 
       </div>
 
+      <div data-page="/page/form" style="display:none;">
+
+        <h1>Form</h1>
+
+        <p>
+          <button data-action="/form/save">Save</button>
+          <button data-action="/form/cancel">Cancel</button>
+        </p>
+
+      </div>
+
       <div data-page="/page/3" style="display:none;">
 
         <h1>Page 3</h1>
@@ -512,10 +523,7 @@
         </details>
 
         <p>
-          <button data-show="/">Home</button>
-          <button data-show="/page/1">HTML examples</button>
-          <button data-show="/page/2">Page 2</button>
-          <button data-show="/page/3|help page|0">Page 3</button>
+          <button data-action="return">Return</button>
         </p>
 
       </div>

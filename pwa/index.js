@@ -3,7 +3,7 @@
 // then amalgamated and minified in a deployment phase. In order to simplify
 // the process of building a PWA, in this case everything is kept in one file.
 // All code that pertains to the application is confined to the Application
-// object.
+// object at the end of the file.
 
 var bankShow, Application, queryElement, formSet, formGet, formInputs, html,
   removeAllChildren, elGet, setChild, setText, listenClick;
@@ -273,10 +273,18 @@ removeAllChildren = function(el) {
 // The Application object contains all application-specific functions and data.
 // Everything outside of is generic for all applications.
 Application = function() {
-  var thisApp, pageFnc, pageShow, action, tally;
+  var thisApp, pageFnc, pageShow, action, tally, pageStk;
 
   thisApp = this;
   tally = 0;
+
+  // pageStk records the path of pages that have been shown so that the
+  // currently displayed page is at the top of the stack. This facilitates the
+  // 'return' action so previously displayed pages can be shown. The
+  // operational difference with a stack is that when a page is shown that is
+  // already on the stack, then the stack is unwound to that element rather
+  // than being pushed.
+  pageStk = [];
 
   // pageFnc is an object that maps a page name to a function that is called
   // before that page is displayed. It provides an opportunity to modify the
@@ -303,16 +311,27 @@ Application = function() {
   };
 
   action = function(name, list) {
-    if (name === 'inc') {
-      tally += Number(list[0]);
-      setText('#tally', tally);
+    var pg;
+    switch (name) {
+      case 'inc':
+        tally += Number(list[0]);
+        setText('#tally', tally);
+        break;
+      case 'return':
+        if (pageStk.length > 1) {
+          pageStk.pop();
+          pg = pageStk.pop();
+          console.log('return', pg);
+          pageShow(pg.name, pg.list);
+        }
+        break;
     }
   };
 
   // Display the specified page and hide all of its siblings. If a pre-display
   // function is defined for the page, show it before making it visible.
   pageShow = function(name, list) {
-    var fnc, el;
+    var fnc, j, popCount, el, show;
 
     el = queryElement('data-page', name);
     if (el) {
@@ -320,6 +339,17 @@ Application = function() {
       if (fnc) {
         fnc(list);
       }
+      // If the page to be shown is already on the page stack, truncate the
+      // remainder of the stack
+      for (popCount = 0, j = 0; (j < pageStk.length) && (0 === popCount); j++) {
+        if (name === pageStk[j].name) {
+          popCount = pageStk.length - j;
+        }
+      }
+      for (j = 0; j < popCount; j++) {
+        pageStk.pop();
+      }
+      pageStk.push({ name: name, list: list });
       bankShow(el);
     }
   };
