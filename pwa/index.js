@@ -99,7 +99,7 @@ formInputs = function(formName) {
   inpList = null;
   formEl = document.querySelector('form[data-name="' + formName + '"]');
   if (formEl) {
-    inpList = formEl.querySelectorAll('[data-name]');
+    inpList = formEl.querySelectorAll('[name]');
   }
   return inpList;
 };
@@ -114,7 +114,7 @@ formSet = function(formName, inputMap) {
   if (inpList) {
     for (j = 0; j < inpList.length; j++) {
       inpEl = inpList[j];
-      key = inpEl.getAttribute('data-name');
+      key = inpEl.getAttribute('name');
       val = inputMap[key];
       if (!val) {
         val = '';
@@ -147,7 +147,7 @@ formGet = function(formName) {
   if (inpList) {
     for (j = 0; j < inpList.length; j++) {
       inpEl = inpList[j];
-      key = inpEl.getAttribute('data-name');
+      key = inpEl.getAttribute('name');
       switch (inpEl.type) {
         case 'number':
           // Convert from string to number

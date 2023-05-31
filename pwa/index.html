@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#404040" />
     <meta content="Minimal progressive web app" name="Description" />
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <link rel="manifest" href="/pwa/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="favicon.ico">
     <link href="index.css" rel="stylesheet" />
     <script src="index.js" defer></script>
@@ -106,182 +106,8 @@
         </div>
 
         <p>
-          <button data-show="/page/1">HTML examples</button>
           <button data-show="/page/2">Page 2</button>
           <button data-show="/page/3|home page|0">Page 3</button>
-          <button data-show="/help">Help</button>
-        </p>
-
-      </div>
-
-      <div data-page="/page/1" style="display:none;">
-
-        <h1>HTML examples</h1>
-
-        <p>
-        This page demonstrates various HTML elements.
-        </p>
-
-        <h2>Code block</h2>
-
-        <p>
-        Here is a code block with a wide ruler that can be helpful to see how
-        much horizontal and vertical space a certain amount of code consumes.
-        It also demonstrates horizontal scrolling which in most circumstances
-        should be avoided.
-        </p>
-
-        <pre>
-<code>1---5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100--105--110--115--120--125--130--135--140--145--150--155--160--165--170--175--180--185--190--195--200--205--210--215--220--225--230--235--240--245--250--255--260--265--270--275--280--285--290--295--300
-2
-3
-4
-5
-6
-7
-8</code></pre>
-
-        <h2>Figure</h2>
-
-        <p>
-        This section demonstrates an image nested within a figure element that
-        includes a caption.
-        </p>
-
-        <figure>
-          <a href="/pwa/min-pwa.png"><img src="/pwa/min-pwa.png" alt="Minimal PWA"></a>
-          <figcaption>
-            Minimal PWA
-          </figcaption>
-        </figure>
-
-        <h2>Form</h2>
-
-        <p>
-        This block demonstrates a simple form. On narrow displays, the email
-        and day of week input fields are shown on separate lines while on wider
-        displays the input fields appear on a single row.
-        </p>
-
-        <form>
-
-          <div>
-            <label>Email
-              <input type="email" placeholder="don.quixote@example.com">
-            </label>
-            <label>Day of week
-              <select>
-                <optgroup label="Work week">
-                  <option value="mon" selected="selected">Monday</option>
-                  <option value="tue">Tuesday</option>
-                  <option value="wed">Wednesday</option>
-                  <option value="thu">Thursday</option>
-                  <option value="fri">Friday</option>
-                </optgroup>
-                <optgroup label="Weekend">
-                  <option value="sat">Saturday</option>
-                  <option value="sun">Sunday</option>
-                </optgroup>
-              </select>
-            </label>
-          </div>
-
-          <div>
-            <label>Message
-              <textarea placeholder="&lt;M&gt;&amp;&lt;M&gt;'s are &quot;awesome&quot;"></textarea>
-            </label>
-          </div>
-
-          <div>
-            <label>
-              <input type="checkbox">
-              <span>Add to calendar</span>
-            </label>
-          </div>
-
-          <div class="f6">
-            <label>
-              <input type="radio" name="season" value="winter">
-              Winter
-            </label>
-            <label>
-              <input type="radio" name="season" checked="checked" value="spring">
-              Spring
-            </label>
-            <label>
-              <input type="radio" name="season" value="summer">
-              Summer
-            </label>
-            <label>
-              <input type="radio" name="season" value="autumn">
-              Autumn
-            </label>
-          </div>
-
-        </form>
-
-        <h2>Table</h2>
-
-        <p>
-        This section shows an example of an HTML table. In general, tables
-        provide a horrible experience on mobile devices unless few narrow
-        columns are used. It is almost always preferable to structure
-        information so that record fields can be displayed in a single column.
-        </p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Editor</th>
-              <th>Creator</th>
-              <th>License</th>
-              <th>First Release</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>GNU Emacs</td>
-              <td>Richard Stallman</td>
-              <td>GNU GPLv3+</td>
-              <td>20 Mar 1985</td>
-            </tr>
-            <tr>
-              <td>Vim</td>
-              <td>Bram Moolenaar</td>
-              <td>Vim License</td>
-              <td>02 Nov 1991</td>
-            </tr>
-            <tr>
-              <td>GNU nano</td>
-              <td>Chris Allegretta</td>
-              <td>GNU GPLv3</td>
-              <td>18 Nov 1999</td>
-            </tr>
-            <tr>
-              <td>Notepad++</td>
-              <td>Don Ho</td>
-              <td>GNU GPLv2</td>
-              <td>24 Nov 2003</td>
-            </tr>
-            <tr>
-              <td>Atom</td>
-              <td>GitHub</td>
-              <td>MIT</td>
-              <td>26 Feb 2014</td>
-            </tr>
-            <tr>
-              <td>Visual Studio Code</td>
-              <td>Microsoft</td>
-              <td>MIT</td>
-              <td>29 Apr 2015</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>
-          <button data-show="/">Home</button>
-          <button data-show="/page/2">Page 2</button>
-          <button data-show="/page/3|page one|1">Page 3</button>
           <button data-show="/help">Help</button>
         </p>
 
@@ -297,7 +123,6 @@
 
         <p>
           <button data-show="/">Home</button>
-          <button data-show="/page/1">HTML examples</button>
           <button data-show="/page/3|page two|2">Page 3</button>
           <button data-show="/help">Help</button>
         </p>
@@ -311,22 +136,22 @@
         <form data-name="transaction">
           <p>
             <label>Date
-              <input type="date" data-name="date">
+              <input type="date" name="date">
             </label>
           </p>
           <p>
             <label>Transactee
-              <input type="text" list="transactees" data-name="transactee" />
+              <input type="text" list="transactees" name="transactee" />
             </label>
           </p>
           <p>
             <label>Check #
-              <input type="text" data-name="checknum">
+              <input type="text" name="checknum">
             </label>
           </p>
           <p>
             <label>Amount
-              <input type="number" step="0.01" data-name="amount">
+              <input type="number" step="0.01" name="amount">
             </label>
           </p>
           <p>
@@ -334,16 +159,16 @@
           </p>
           <p>
             <label>Comment
-              <textarea data-name="comment"></textarea>
+              <textarea name="comment"></textarea>
             </label>
           </p>
           <p class="f12">
             <label>
-              <input data-name="reconciled" type="checkbox">
+              <input name="reconciled" type="checkbox">
               <span>Reconciled</span>
             </label>
             <label>
-              <input data-name="void" type="checkbox">
+              <input name="void" type="checkbox">
               <span>Void</span>
             </label>
           </p>
@@ -375,7 +200,6 @@
 
         <p>
           <button data-show="/">Home</button>
-          <button data-show="/page/1">HTML examples</button>
           <button data-show="/page/2">Page 2</button>
           <button data-show="/page/form">Form</button>
           <button data-show="/help">Help</button>
@@ -446,7 +270,17 @@
           are added or removed from the project, in general not too often.
           </p>
 
-          <h2>Styling</h2>
+        </details>
+
+        <details>
+
+          <summary>Styling</summary>
+
+          <h2>HTML examples</h2>
+
+          <p>
+          This page demonstrates various HTML elements.
+          </p>
 
           <p>
           A lot of apps use stylesheet classes extensively. This project does
@@ -462,6 +296,162 @@
           elements. In this example, the style might look like
           <code>.record-container > div { ... }</code>).
           </p>
+
+          <h2>Code block</h2>
+
+          <p>
+          Here is a code block with a wide ruler that can be helpful to see how
+          much horizontal and vertical space a certain amount of code consumes.
+          It also demonstrates horizontal scrolling which in most circumstances
+          should be avoided.
+          </p>
+
+          <pre>
+  <code>1---5---10---15---20---25---30---35---40---45---50---55---60---65---70---75---80---85---90---95--100--105--110--115--120--125--130--135--140--145--150--155--160--165--170--175--180--185--190--195--200--205--210--215--220--225--230--235--240--245--250--255--260--265--270--275--280--285--290--295--300
+  2
+  3
+  4
+  5
+  6
+  7
+  8</code></pre>
+
+          <h2>Figure</h2>
+
+          <p>
+          This section demonstrates an image nested within a figure element that
+          includes a caption.
+          </p>
+
+          <figure>
+            <a href="/pwa/min-pwa.png"><img src="/pwa/min-pwa.png" alt="Minimal PWA"></a>
+            <figcaption>
+              Minimal PWA
+            </figcaption>
+          </figure>
+
+          <h2>Form</h2>
+
+          <p>
+          This block demonstrates a simple form. On narrow displays, the email
+          and day of week input fields are shown on separate lines while on wider
+          displays the input fields appear on a single row.
+          </p>
+
+          <form>
+
+            <div>
+              <label>Email
+                <input type="email" autocomplete name="email" placeholder="don.quixote@example.com">
+              </label>
+              <label>Day of week
+                <select name="dow">
+                  <optgroup label="Work week">
+                    <option value="mon" selected="selected">Monday</option>
+                    <option value="tue">Tuesday</option>
+                    <option value="wed">Wednesday</option>
+                    <option value="thu">Thursday</option>
+                    <option value="fri">Friday</option>
+                  </optgroup>
+                  <optgroup label="Weekend">
+                    <option value="sat">Saturday</option>
+                    <option value="sun">Sunday</option>
+                  </optgroup>
+                </select>
+              </label>
+            </div>
+
+            <div>
+              <label>Message
+                <textarea name="msg" placeholder="&lt;M&gt;&amp;&lt;M&gt;'s are &quot;awesome&quot;"></textarea>
+              </label>
+            </div>
+
+            <div>
+              <label>
+                <input name="addcal" type="checkbox">
+                <span>Add to calendar</span>
+              </label>
+            </div>
+
+            <div class="f6">
+              <label>
+                <input type="radio" name="season" value="winter">
+                Winter
+              </label>
+              <label>
+                <input type="radio" name="season" checked="checked" value="spring">
+                Spring
+              </label>
+              <label>
+                <input type="radio" name="season" value="summer">
+                Summer
+              </label>
+              <label>
+                <input type="radio" name="season" value="autumn">
+                Autumn
+              </label>
+            </div>
+
+          </form>
+
+          <h2>Table</h2>
+
+          <p>
+          This section shows an example of an HTML table. In general, tables
+          provide a horrible experience on mobile devices unless few narrow
+          columns are used. It is almost always preferable to structure
+          information so that record fields can be displayed in a single column.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Editor</th>
+                <th>Creator</th>
+                <th>License</th>
+                <th>First Release</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GNU Emacs</td>
+                <td>Richard Stallman</td>
+                <td>GNU GPLv3+</td>
+                <td>20 Mar 1985</td>
+              </tr>
+              <tr>
+                <td>Vim</td>
+                <td>Bram Moolenaar</td>
+                <td>Vim License</td>
+                <td>02 Nov 1991</td>
+              </tr>
+              <tr>
+                <td>GNU nano</td>
+                <td>Chris Allegretta</td>
+                <td>GNU GPLv3</td>
+                <td>18 Nov 1999</td>
+              </tr>
+              <tr>
+                <td>Notepad++</td>
+                <td>Don Ho</td>
+                <td>GNU GPLv2</td>
+                <td>24 Nov 2003</td>
+              </tr>
+              <tr>
+                <td>Atom</td>
+                <td>GitHub</td>
+                <td>MIT</td>
+                <td>26 Feb 2014</td>
+              </tr>
+              <tr>
+                <td>Visual Studio Code</td>
+                <td>Microsoft</td>
+                <td>MIT</td>
+                <td>29 Apr 2015</td>
+              </tr>
+            </tbody>
+          </table>
 
         </details>
 
