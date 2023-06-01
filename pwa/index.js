@@ -54,8 +54,8 @@ listenClick = function(handlers) {
 
 // queryElement returns the first element encountered that has the specified
 // attribute and value assigned. null is returned a matching element cannot be
-// found. For example, if <span data-name="/page/42"> is defined in the DOM,
-// then the call queryElement('data-name', '/page/42') will return that span
+// found. For example, if <span id="/page/42"> is defined in the DOM,
+// then the call queryElement('id', '/page/42') will return that span
 // element.
 queryElement = function(attr, val) {
   return document.querySelector('[' + attr + '="' + val + '"]');
@@ -91,20 +91,20 @@ bankShow = function(el, rel) {
 };
 
 // This function returns a list of all input fields in the specified form that
-// have the data-name attribute set. The return value is null if the form
-// cannot be found.
+// have the id attribute set. The return value is null if the form cannot be
+// found.
 formInputs = function(formName) {
   var formEl, inpList;
 
   inpList = null;
-  formEl = document.querySelector('form[data-name="' + formName + '"]');
+  formEl = document.querySelector('form[id="' + formName + '"]');
   if (formEl) {
     inpList = formEl.querySelectorAll('[name]');
   }
   return inpList;
 };
 
-// This function populates a named form (a form with the data-name attribute
+// This function populates a named form (a form with the id attribute
 // set) with values in an object. inputMap looks like { amount: "123.45", tax:
 // false, ... }
 formSet = function(formName, inputMap) {
@@ -301,7 +301,8 @@ strDateToStdStr = function(dt) {
 // The Application object contains all application-specific functions and data.
 // Everything outside of is generic for all applications.
 Application = function() {
-  var thisApp, pageFnc, pageShow, action, tally, pageStk, sample;
+  var thisApp, pageFnc, pageShow, pageShowPrev, action, tally, pageStk,
+  sample, ledgerView;
 
   thisApp = this;
   tally = 0;
@@ -354,44 +355,100 @@ Application = function() {
     ]
   };
 
-  pageFnc['/page/2'] = function(list) {
+  ledgerView = function(data) {
+    var el, hdrEl, recEl, j, dot, icon, bank, actual, rec, elList, list;
+    icon = '►';
+    dot = ' · ';
+    bank = data.rows.balance_start || 0;
+    actual = data.rows.balance_start || 0;
+    data.rows.sort(function(a, b) {
+      var cmp;
+      if (a.date === b.date) {
+        cmp = 0;
+      } else if (a.date < b.date) {
+        cmp = -1;
+      } else {
+        cmp = 1;
+      }
+    });
+    list = [];
+    for (j = 0; j < data.rows.length; j++) {
+      rec = data.rows[j];
+      if (! rec['void']) {
+        actual += rec.amount;
+        if (rec.reconciled) {
+          bank += rec.amount;
+        }
+      }
+      rec.bank = bank;
+      rec.actual = actual;
+      rec.pos = j;
+      // console.log('rec', rec);
+      list.push(rec);
+    }
+
+    el = queryElement('id', 'ledger');
+    removeAllChildren(el);
+
+    el.appendChild(html('div', {},
+      html('div', {}, 'Edit'),
+      html('div', {}, 'Transaction'),
+      html('div', {}, 'Amount'),
+      html('div', {}, 'Bank')
+    ));
+
+    for (j = data.rows.length; j > 0; j--) {
+      rec = list[j - 1];
+      el.appendChild(html('div', {},
+        html('div', { 'data-show': '/form/ledger|' + rec.pos }, icon),
+        html('div', {}, rec.date, dot, rec.comment, html('br', {}), rec.actual.toFixed(2)),
+        html('div', {}, rec.amount.toFixed(2)),
+        html('div', {}, rec.bank.toFixed(2))
+      ));
+    }
+
+    // console.log('el', el);
+    // return html('div', {}, elList);
+  };
+
+  pageFnc['/page/ledger'] = function(list) {
     var el;
-    el = queryElement('data-name', 'time-load');
+    el = queryElement('id', 'ledger');
     if (el) {
-      el.innerText = new Date().toString();
+      // el.innerText = new Date().toString();
+      // setChild(el, ledgerView(sample));
+      ledgerView(sample);
     }
   };
 
   pageFnc['/page/form'] = function(list) {
-    console.log('sample values', sample.rows[0]);
+    // console.log('sample values', sample.rows[0]);
     formSet('transaction', sample.rows[0]);
-    console.log('form values', formGet('transaction'));
+    // console.log('form values', formGet('transaction'));
   };
 
-  pageFnc['/page/3'] = function(list) {
-    var el;
-    el = queryElement('data-name', 'previous');
-    if (el) {
-      if (list.length == 2) {
-        el.innerText = list[0] + ' (' + list[1] + ')';
-      }
+  pageShowPrev = function() {
+    var pg;
+
+    if (pageStk.length > 1) {
+      pageStk.pop();
+      pg = pageStk.pop();
+      pageShow(pg.name, pg.list);
     }
-    setChild('#test', html('p', {}, 'This is a ', html('b', {}, 'test'), '.'));
   };
 
   action = function(name, list) {
-    var pg;
     switch (name) {
       case 'inc':
         tally += Number(list[0]);
         setText('#tally', tally);
         break;
       case 'return':
-        if (pageStk.length > 1) {
-          pageStk.pop();
-          pg = pageStk.pop();
-          pageShow(pg.name, pg.list);
-        }
+        pageShowPrev();
+        break;
+      case '/form/save':
+        // TODO save form values before returning
+        pageShowPrev();
         break;
     }
   };

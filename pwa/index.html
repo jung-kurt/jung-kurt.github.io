@@ -106,24 +106,7 @@
         </div>
 
         <p>
-          <button data-show="/page/2">Page 2</button>
-          <button data-show="/page/3|home page|0">Page 3</button>
-          <button data-show="/help">Help</button>
-        </p>
-
-      </div>
-
-      <div data-page="/page/2" style="display:none;">
-
-        <h1>Page 2</h1>
-
-        <p>
-        This page was displayed at <span data-name="time-load">.</span>.
-        </p>
-
-        <p>
-          <button data-show="/">Home</button>
-          <button data-show="/page/3|page two|2">Page 3</button>
+          <button data-show="/page/ledger">Ledger</button>
           <button data-show="/help">Help</button>
         </p>
 
@@ -133,7 +116,7 @@
 
         <h1>Form</h1>
 
-        <form data-name="transaction">
+        <form id="transaction">
           <p>
             <label>Date
               <input type="date" name="date">
@@ -174,34 +157,21 @@
           </p>
           <p>
             <button data-action="/form/save">Save</button>
-            <button data-action="/form/cancel">Cancel</button>
+            <button data-action="return">Cancel</button>
+            <button data-show="/help">Help</button>
           </p>
         </form>
 
       </div>
 
-      <div data-page="/page/3" style="display:none;">
+      <div data-page="/page/ledger" style="display:none;">
 
-        <h1>Page 3</h1>
+        <h1>Ledger</h1>
 
-        <p>
-        This is page 3. Previous page was <span data-name="previous">.</span>.
-        </p>
-
-        <div id="test"> </div>
-
-        <p>Tally is <b id="tally">0</b>.</p>
-
-        <p>
-          <button data-action="inc|2">Increment by 2</button>
-          <button data-action="inc|3">Increment by 3</button>
-          <button data-action="inc|-4">Decrement by 4</button>
-        </p>
+        <div class="ledger" id="ledger"> </div>
 
         <p>
           <button data-show="/">Home</button>
-          <button data-show="/page/2">Page 2</button>
-          <button data-show="/page/form">Form</button>
           <button data-show="/help">Help</button>
         </p>
 
@@ -342,7 +312,7 @@
 
             <div>
               <label>Email
-                <input type="email" autocomplete name="email" placeholder="don.quixote@example.com">
+                <input type="email" autocomplete="on" name="email" placeholder="don.quixote@example.com">
               </label>
               <label>Day of week
                 <select name="dow">
