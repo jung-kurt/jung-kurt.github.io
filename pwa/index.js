@@ -5,13 +5,44 @@
 // All code that pertains to the application is confined to the Application
 // object at the end of the file.
 
-var bankShow, Application, queryElement, formSet, formGet, formInputs, html,
-  removeAllChildren, elementNew, elementNewOriginal, elGet, setChild, setText,
-  listenClick, elementNewWrite, daysAdd, strDaysAdd, strDateToStdStr;
+var bankShow, Application, queryElement, formSet, formGet, formInputs,
+  removeAllChildren, elementNew, elGet, setChild, setText, listenClick,
+  elementNewWrite, daysAdd, strDaysAdd, strDateToStdStr, removeSibs,
+  attrMapLoad;
 
-// Populate the text nodes of elRoot values from the text array textList. null
-// elements are skipped. This function recurses if an element of list is itself
-// an array.
+// Return object that associates names with elements that contain the specified
+// attribute. If deep is true, then for each retrieved template, replace the
+// element value with a deeply-cloned copy. If removeAttr is true, remove the
+// specified attribute from the clone.
+attrMapLoad = function(attr, deep, removeAttr) {
+  var j, val, el, list, obj;
+
+  obj = {};
+  list = document.querySelectorAll('[' + attr + ']');
+  for (j = 0; j < list.length; j++) {
+    el = list[j];
+    val = el.getAttribute(attr);
+    if (deep) {
+      el = el.cloneNode(true);
+      if (removeAttr) {
+        el.removeAttribute(attr);
+      }
+    }
+    obj[val] = el;
+  }
+  return obj;
+};
+
+// Remove all of el's following siblings
+removeSibs = function(el) {
+  while (el.nextElementSibling) {
+    el.parentNode.removeChild(el.nextElementSibling);
+  }
+};
+
+// Populate the text nodes of elRoot with values from the text array list. null
+// elements are skipped. list is an array of zero or null element, zero or more
+// string element, or an array of nulls, strings, and arrays.
 elementNewWrite = function(elRoot, list) {
   var j, str, el;
   el = elRoot.firstElementChild;
@@ -27,33 +58,41 @@ elementNewWrite = function(elRoot, list) {
     }
     el = el.nextElementSibling;
   }
-
 };
 
-// Clone elSource and populate its text nodes with values from the text array
-// textList. null elements are skipped.
+// elementNew is a convenience function for programmatically constructing
+// blocks of possibly complex HTML. Rather than building up nodes from scratch,
+// it works by replacing text nodes of a deeply cloned node that already
+// exists. The source node is not modified.
+//
+// elSource is cloned and used a template. Its text nodes are replaced with
+// values from the text array textList. null elements are skipped.
+//
+// For example, programatically contruct a clone of the following HTML with
+// different values.
+//
+// <div>
+//   <div>►</div>
+//   <div><span>24 May 2023</span><br><span>Bank · Wages</span><br><span>Actual 103.50</span></div>
+//   <div>45.00</div>
+//   <div>100.00</div>
+// </div>
+//
+// el = elementNew(elTemplate, [
+//   null,
+//   ['1 June 2023', null, 'Farmer Bob', null, 'Actual 20.25'],
+//   Number(j).toFixed(2),
+//   Number(j * 3).toFixed(2)
+// ]);
+//
+// The null elements indicate that the text that exists in elSource should be
+// preserved or, in the case of elements, skipped. The nested array populates
+// the spans of second div block. The nulls are used to preserve the br blocks.
 elementNew = function(elSource, textList) {
   var elNew;
 
   elNew = elSource.cloneNode(true);
   elementNewWrite(elNew, textList);
-  return elNew;
-};
-
-// Clone elSource and populate its text nodes with values from the text array
-// textList. null elements are skipped.
-elementNewOriginal = function(elSource, textList) {
-  var str, elNew, el, j;
-
-  elNew = elSource.cloneNode(true);
-  el = elNew.firstElementChild;
-  for (j = 0; j < textList.length; j++) {
-    str = textList[j];
-    if (str !== null) {
-      el.innerText = str;
-    }
-    el = el.nextElementSibling;
-  }
   return elNew;
 };
 
@@ -218,76 +257,6 @@ formGet = function(formName) {
   return form;
 };
 
-// This function creates a DOM element. It simplifies the task of generating
-// structured HTML. The first argument is a node type, eg, 'p' or 'a'. The
-// second argument is an object that specifies attributes to be applied to the
-// newly created element, eg, { href="/page/1" }. Subsequent arguments are
-// strings, elements or arrays of the same. In practice, calling html() as an
-// argument facilitates the construction of nested DOM elements.
-//
-// html('p', {}, 'Hello') ->
-// <p>Hello</p>
-//
-// html('p', { class: 'active' }, 'Hello') ->
-// <p class="active">Hello</p>
-//
-// html('p', {}, 'Click ', html('a', { href: "#foo" }, 'here'), '!') ->
-// <p>Click <a href="#foo">here</a>!</p>
-//
-// This function is adapted from https://github.com/joestelmach/laconic by Joe
-// Stelmach, MIT license
-html = function() {
-  var j, k, attr, key, val, el, arg, argAppend;
-
-  // First argument is tag name, eg 'p' or 'div'
-  el = document.createElement(arguments[0]);
-
-  // Second argument is attribute object, eg { href: "#foo" }
-  attr = arguments[1];
-  for (key in attr) {
-    if (attr.hasOwnProperty(key)) {
-      val = attr[key];
-      if ((val !== null) && (val !== undefined)) {
-        if (key === 'display') {
-          el.style.display = val;
-        } else if ((key === 'style') && (el.style.setAttribute)) {
-          el.style.setAttribute('cssText', val);
-        } else if (key === 'className') {
-          el.className = (el.className.length > 0) ? el.className + ' ' + val : val;
-        } else {
-          el.setAttribute(key, val);
-        }
-      }
-    }
-  }
-
-  argAppend = function(el, arg) {
-    if (arg.nodeType !== 1) {
-      // If arg isn't already a node, make it into a text node
-      arg = document.createTextNode(arg);
-    }
-    el.appendChild(arg);
-  };
-
-  // Subsequent arguments are text, nodes, or arrays of arguments
-  for (j = 2; j < arguments.length; j++) {
-    arg = arguments[j];
-    if (arg) {
-      if (Object.prototype.toString.call(arg) === '[object Array]') {
-        // arg is an array -- treat all elements as if they had been specified
-        // as arguments
-        for (k = 0; k < arg.length; k++) {
-          argAppend(el, arg[k]);
-        }
-      } else {
-        argAppend(el, arg);
-      }
-    }
-  }
-
-  return el;
-};
-
 // Return the element corresponding to el. If el is a string, it is assumed to
 // be a selector. In this case, the first matching element is returned.
 // Otherwise, el itself is returned.
@@ -351,7 +320,7 @@ strDateToStdStr = function(dt) {
 // Everything outside of is generic for all applications.
 Application = function() {
   var thisApp, pageFnc, pageShow, pageShowPrev, action, tally, pageStk,
-  sample, ledgerView, practice;
+  sample, ledgerView, templates;
 
   thisApp = this;
   tally = 0;
@@ -369,6 +338,11 @@ Application = function() {
   // page's content before it is shown.
   pageFnc = {};
 
+  // templates is an object that associates names with deeply cloned elements
+  // from the document. Each name is the value of the data-template attribute,
+  // eg, data-template="ledger-row".
+  templates = attrMapLoad('data-template', true, true);
+
   // sample defines the principal data structure used in this application
   sample = {
     "name": "Bank of Whoville / Checking",
@@ -380,20 +354,20 @@ Application = function() {
         'checknum': '4021',
         'amount': 48,
         'comment': 'Horseshoes and nails',
-        'reconciled': false,
+        'reconciled': true,
         'void': false
       },
       {
-        'date': '2022-09-01',
+        'date': '2022-09-12',
         'transactee': 'Bank of Whoville',
         'checknum': '',
         'amount': 120.5,
         'comment': 'Sale of alfalfa',
-        'reconciled': false,
+        'reconciled': true,
         'void': false
       },
       {
-        'date': '2022-09-01',
+        'date': '2022-09-30',
         'transactee': 'Whoville Grains',
         'checknum': '4022',
         'amount': 27.5,
@@ -404,70 +378,15 @@ Application = function() {
     ]
   };
 
-  // <div class="ledger" id="ledger-2">
-  //   <div>
-  //     <div>Edit</div>
-  //     <div>Transaction</div>
-  //     <div>Amount</div>
-  //     <div>Bank</div>
-  //   </div>
-  //   <div class="ledger-active">
-  //     <div data-show="/form/ledger|1">►</div>
-  //     <div><span>24 May 2023</span><br><span>Bank · Wages</span><br><span>Actual 103.50<span></div>
-  //     <div>45.00</div>
-  //     <div>100.00</div>
-  //   </div>
-  // </div>
-
-  practice = function() {
-    var j, elParent, el, elRow, elHdr;
-
-    // --- Initial step of script, one time only, remove "template" div ---
-
-    elParent = queryElement('id', 'ledger-2');
-    console.log('ledger-2', elParent);
-    elHdr = elParent.firstElementChild;
-    console.log('ledger-2 first child', elHdr);
-    el = elHdr.nextElementSibling;
-    console.log('ledger-2 next child', el);
-    el = elParent.removeChild(el);
-    console.log('ledger row node', el);
-    elRow = el.cloneNode(true);
-    console.log('row node clone', elRow);
-
-    // --- Simulate removal of all remaining siblings ---
-
-    console.log('remove all siblings', elHdr.nextElementSibling);
-    while (elHdr.nextElementSibling) {
-      // console.log('remove sib', elHdr.nextElementSibling);
-      elParent.removeChild(elHdr.nextElementSibling);
-    }
-
-    // --- Build up ledger list ---
-    for (j = 0; j < 12; j++) {
-      // el = elRow.cloneNode(true);
-      // el.firstElementChild.nextElementSibling.nextElementSibling.innerText = 'item ' + j;
-      // elementNew = function(elSource, textList) {
-        //   <div class="ledger-active">
-  //     <div data-show="/form/ledger|1">►</div>
-  //     <div>24 May 2023<br>Bank · Wages<br>Actual 103.50</div>
-  //     <div>45.00</div>
-  //     <div>100.00</div>
-  //   </div>
-      // Use nulls to skip over <br> tags
-      el = elementNew(elRow, [null, ['A ' + j, null, 'B ' + j, null, 'C ' + j], Number(j).toFixed(2), Number(j * 3).toFixed(2)]);
-      console.log('new el ' + j, el);
-      elParent.appendChild(el);
-    }
-
-  };
-
   ledgerView = function(data) {
-    var el, j, dot, icon, bank, actual, rec, list;
+    var el, elParent, elTemplate, j, dot, icon, bank, actual, rec, list;
+
     icon = '►';
     dot = ' · ';
     bank = data.rows.balance_start || 0;
     actual = data.rows.balance_start || 0;
+
+    // Sort data by date ascending
     data.rows.sort(function(a, b) {
       var cmp;
       if (a.date === b.date) {
@@ -479,6 +398,8 @@ Application = function() {
       }
     });
     list = [];
+
+    // Calculate bank and actual talies
     for (j = 0; j < data.rows.length; j++) {
       rec = data.rows[j];
       if (! rec['void']) {
@@ -494,28 +415,32 @@ Application = function() {
       list.push(rec);
     }
 
-    el = queryElement('id', 'ledger');
-    removeAllChildren(el);
-
-    el.appendChild(html('div', {},
-      html('div', {}, 'Edit'),
-      html('div', {}, 'Transaction'),
-      html('div', {}, 'Amount'),
-      html('div', {}, 'Bank')
-    ));
-
+    // Display records with tallies by date descending
+    elParent = queryElement('id', 'ledger');
+    console.log('elParent (id=ledger)', elParent);
+    removeSibs(elParent.firstElementChild);
+    console.log('templates', templates);
+    elTemplate = templates['ledger-row'];
+    console.log('elTemplate', elTemplate);
     for (j = data.rows.length; j > 0; j--) {
       rec = list[j - 1];
-      el.appendChild(html('div', {},
-        html('div', { 'data-show': '/form/ledger|' + rec.pos }, icon),
-        html('div', {}, rec.date, dot, rec.comment, html('br', {}), rec.actual.toFixed(2)),
-        html('div', {}, rec.amount.toFixed(2)),
-        html('div', {}, rec.bank.toFixed(2))
-      ));
-    }
+      el = elementNew(elTemplate, [
+        null,
+        [rec.checknum, null, rec.transactee, null, Number(rec.actual).toFixed(2)],
+        Number(rec.amount).toFixed(2),
+        Number(rec.bank).toFixed(2)
+      ]);
 
-    // console.log('el', el);
-    // return html('div', {}, elList);
+        // 'date': '2022-09-12',
+        // 'transactee': 'Bank of Whoville',
+        // 'checknum': '',
+        // 'amount': 120.5,
+        // 'comment': 'Sale of alfalfa',
+        // 'reconciled': true,
+        // 'void': false
+
+      elParent.appendChild(el);
+    }
   };
 
   pageFnc['/page/ledger'] = function(list) {
@@ -556,9 +481,6 @@ Application = function() {
       case '/form/save':
         // TODO save form values before returning
         pageShowPrev();
-        break;
-      case 'practice':
-        practice();
         break;
     }
   };
