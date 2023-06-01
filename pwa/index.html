@@ -168,10 +168,60 @@
 
         <h1>Ledger</h1>
 
+        <h2>DOM builder approach</h2>
+
         <div class="ledger" id="ledger"> </div>
+
+        <h2>Template approach</h2>
+
+        <div class="ledger" id="ledger-2">
+          <div>
+            <div>Edit</div>
+            <div>Transaction</div>
+            <div>Amount</div>
+            <div>Bank</div>
+          </div>
+          <div class="ledger-active">
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24 May 2023</span><br><span>Bank · Wages</span><br><span>Actual 103.50</span></div>
+            <div>45.00</div>
+            <div>100.00</div>
+          </div>
+          <div>
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24a</span><br><span>b</span><br><span>c</span></div>
+            <div>b</div>
+            <div>c</div>
+          </div>
+          <div>
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24a</span><br><span>b</span><br><span>c</span></div>
+            <div>b</div>
+            <div>c</div>
+          </div>
+          <div>
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24a</span><br><span>b</span><br><span>c</span></div>
+            <div>b</div>
+            <div>c</div>
+          </div>
+          <div>
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24a</span><br><span>b</span><br><span>c</span></div>
+            <div>b</div>
+            <div>c</div>
+          </div>
+          <div>
+            <div data-show="/form/ledger|1">►</div>
+            <div><span>24a</span><br><span>b</span><br><span>c</span></div>
+            <div>b</div>
+            <div>c</div>
+          </div>
+        </div>
 
         <p>
           <button data-show="/">Home</button>
+          <button data-action="practice">Practice</button>
           <button data-show="/help">Help</button>
         </p>
 

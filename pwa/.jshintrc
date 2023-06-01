@@ -1,0 +1,11 @@
+{
+  "esversion": 3,
+  "undef": true,
+  "unused": "vars",
+  "globals": {
+    "navigator": true,
+    "console": true,
+    "document": true,
+    "window": true
+  }
+}

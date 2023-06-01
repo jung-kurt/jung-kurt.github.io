@@ -6,7 +6,56 @@
 // object at the end of the file.
 
 var bankShow, Application, queryElement, formSet, formGet, formInputs, html,
-  removeAllChildren, elGet, setChild, setText, listenClick;
+  removeAllChildren, elementNew, elementNewOriginal, elGet, setChild, setText,
+  listenClick, elementNewWrite, daysAdd, strDaysAdd, strDateToStdStr;
+
+// Populate the text nodes of elRoot values from the text array textList. null
+// elements are skipped. This function recurses if an element of list is itself
+// an array.
+elementNewWrite = function(elRoot, list) {
+  var j, str, el;
+  el = elRoot.firstElementChild;
+  for (j = 0; j < list.length; j++) {
+    str = list[j];
+    if (typeof str === 'string') {
+      el.innerText = str;
+    } else if (str === null) {
+      // no op
+    } else {
+      // assume array
+      elementNewWrite(el, str);
+    }
+    el = el.nextElementSibling;
+  }
+
+};
+
+// Clone elSource and populate its text nodes with values from the text array
+// textList. null elements are skipped.
+elementNew = function(elSource, textList) {
+  var elNew;
+
+  elNew = elSource.cloneNode(true);
+  elementNewWrite(elNew, textList);
+  return elNew;
+};
+
+// Clone elSource and populate its text nodes with values from the text array
+// textList. null elements are skipped.
+elementNewOriginal = function(elSource, textList) {
+  var str, elNew, el, j;
+
+  elNew = elSource.cloneNode(true);
+  el = elNew.firstElementChild;
+  for (j = 0; j < textList.length; j++) {
+    str = textList[j];
+    if (str !== null) {
+      el.innerText = str;
+    }
+    el = el.nextElementSibling;
+  }
+  return elNew;
+};
 
 // This function listens to clicks at the document level. handlers is an object
 // that maps attributes, eg, 'data-show', to a function that is called when the
@@ -302,7 +351,7 @@ strDateToStdStr = function(dt) {
 // Everything outside of is generic for all applications.
 Application = function() {
   var thisApp, pageFnc, pageShow, pageShowPrev, action, tally, pageStk,
-  sample, ledgerView;
+  sample, ledgerView, practice;
 
   thisApp = this;
   tally = 0;
@@ -355,8 +404,66 @@ Application = function() {
     ]
   };
 
+  // <div class="ledger" id="ledger-2">
+  //   <div>
+  //     <div>Edit</div>
+  //     <div>Transaction</div>
+  //     <div>Amount</div>
+  //     <div>Bank</div>
+  //   </div>
+  //   <div class="ledger-active">
+  //     <div data-show="/form/ledger|1">►</div>
+  //     <div><span>24 May 2023</span><br><span>Bank · Wages</span><br><span>Actual 103.50<span></div>
+  //     <div>45.00</div>
+  //     <div>100.00</div>
+  //   </div>
+  // </div>
+
+  practice = function() {
+    var j, elParent, el, elRow, elHdr;
+
+    // --- Initial step of script, one time only, remove "template" div ---
+
+    elParent = queryElement('id', 'ledger-2');
+    console.log('ledger-2', elParent);
+    elHdr = elParent.firstElementChild;
+    console.log('ledger-2 first child', elHdr);
+    el = elHdr.nextElementSibling;
+    console.log('ledger-2 next child', el);
+    el = elParent.removeChild(el);
+    console.log('ledger row node', el);
+    elRow = el.cloneNode(true);
+    console.log('row node clone', elRow);
+
+    // --- Simulate removal of all remaining siblings ---
+
+    console.log('remove all siblings', elHdr.nextElementSibling);
+    while (elHdr.nextElementSibling) {
+      // console.log('remove sib', elHdr.nextElementSibling);
+      elParent.removeChild(elHdr.nextElementSibling);
+    }
+
+    // --- Build up ledger list ---
+    for (j = 0; j < 12; j++) {
+      // el = elRow.cloneNode(true);
+      // el.firstElementChild.nextElementSibling.nextElementSibling.innerText = 'item ' + j;
+      // elementNew = function(elSource, textList) {
+        //   <div class="ledger-active">
+  //     <div data-show="/form/ledger|1">►</div>
+  //     <div>24 May 2023<br>Bank · Wages<br>Actual 103.50</div>
+  //     <div>45.00</div>
+  //     <div>100.00</div>
+  //   </div>
+      // Use nulls to skip over <br> tags
+      el = elementNew(elRow, [null, ['A ' + j, null, 'B ' + j, null, 'C ' + j], Number(j).toFixed(2), Number(j * 3).toFixed(2)]);
+      console.log('new el ' + j, el);
+      elParent.appendChild(el);
+    }
+
+  };
+
   ledgerView = function(data) {
-    var el, hdrEl, recEl, j, dot, icon, bank, actual, rec, elList, list;
+    var el, j, dot, icon, bank, actual, rec, list;
     icon = '►';
     dot = ' · ';
     bank = data.rows.balance_start || 0;
@@ -450,13 +557,16 @@ Application = function() {
         // TODO save form values before returning
         pageShowPrev();
         break;
+      case 'practice':
+        practice();
+        break;
     }
   };
 
   // Display the specified page and hide all of its siblings. If a pre-display
   // function is defined for the page, show it before making the page visible.
   pageShow = function(name, list) {
-    var fnc, j, popCount, el, show;
+    var fnc, j, popCount, el;
 
     el = queryElement('data-page', name);
     if (el) {
