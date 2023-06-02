@@ -5,10 +5,32 @@
 // All code that pertains to the application is confined to the Application
 // object at the end of the file.
 
-var bankShow, Application, queryElement, formSet, formGet, formInputs,
-  removeAllChildren, elementNew, elGet, setChild, setText, listenClick,
-  elementNewWrite, daysAdd, strDaysAdd, strDateToStdStr, removeSibs,
-  attrMapLoad, elementRelative;
+var
+  Application,
+  attrMapLoad,
+  bankShow,
+  dateFromStr,
+  dateShort,
+  dateToStdStr,
+  dateToStr,
+  daysAdd,
+  dotSep,
+  elementNew,
+  elementNewWrite,
+  elementRelative,
+  elGet,
+  formGet,
+  formInputs,
+  formSet,
+  listenClick,
+  queryElement,
+  removeAllChildren,
+  removeSibs,
+  reNonDigit,
+  setChild,
+  setText,
+  strDaysAdd,
+  strMonthShList;
 
 // Return object that associates names with elements that contain the specified
 // attribute. If deep is true, then for each retrieved template, replace the
@@ -117,6 +139,22 @@ elementRelative = function(el, list) {
     }
   }
   return el;
+};
+
+// For dotSep(null, "one", "two", "", "", false, "three", undefined), return
+// "one · two · three".
+dotSep = function() {
+  var ret, j, sep, str;
+  sep = '';
+  ret = '';
+  for (j = 0; j < arguments.length; j++) {
+    str = arguments[j];
+    if ((str) && (str !== "")) {
+      ret = ret + sep + str;
+      sep = ' · ';
+    }
+  }
+  return ret;
 };
 
 // This function listens to clicks at the document level. handlers is an object
@@ -331,19 +369,68 @@ daysAdd = function(dy) {
 // Return a standard date string (eg, '2006-01-02') corresponding to current
 // date plus dy. dy should be negative for past dates.
 strDaysAdd = function(dy) {
-  return strDateToStdStr(daysAdd(dy));
+  return dateToStdStr(daysAdd(dy));
 };
 
+strMonthShList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+reNonDigit = /\D/g;
+
 // Return '2006-01-02' from a JavaScript date.
-strDateToStdStr = function(dt) {
+dateToStdStr = function(dt) {
   return '' + dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2);
+};
+
+// Return '2 Jan 2006' from a JavaScript date.
+dateToStr = function(dt) {
+  return '' + dt.getDate() + ' ' + strMonthShList[dt.getMonth()] + ' ' + dt.getFullYear();
+};
+
+// Return Date from string in standard string form ('2006-01-02' or
+// '2006/01/02' or '20060102'). Returns null if dateStr is not valid.
+dateFromStr = function(dateStr) {
+  var str, d, m, y, dt;
+  dt = null;
+  str = dateStr.replace(reNonDigit, '');
+  if (str.length === 8) {
+    y = parseInt(str.substring(0, 4), 10);
+    if (!isNaN(y)) {
+      m = parseInt(str.substring(4, 6), 10);
+      if (!isNaN(m)) {
+        d = parseInt(str.substring(6, 8), 10);
+        if (!isNaN(d)) {
+          dt = new Date(y, m - 1, d);
+        }
+      }
+    }
+  }
+  return dt;
+};
+
+// Return '2 Jan 2006' from '2006-01-02'
+dateShort = function(stdDt) {
+  var dt;
+  dt = dateFromStr(stdDt);
+  if (dt) {
+    stdDt = dateToStr(dt);
+  }
+  return stdDt;
 };
 
 // The Application object contains all application-specific functions and data.
 // Everything outside of is generic for all applications.
 Application = function() {
-  var thisApp, pageFnc, pageShow, pageShowPrev, action, tally, pageStk,
-  sample, ledgerView, templates;
+  var
+    action,
+    ledgerView,
+    pageFnc,
+    pageShow,
+    pageShowPrev,
+    pageStk,
+    sample,
+    tally,
+    templates,
+    thisApp;
 
   thisApp = this;
   tally = 0;
@@ -402,7 +489,7 @@ Application = function() {
   };
 
   ledgerView = function(data) {
-    var el, elParent, elTemplate, j, bank, actual, rec, list;
+    var el, elParent, elTemplate, j, bank, actual, rec, list, aStr, bStr;
 
     bank = data.rows.balance_start || 0;
     actual = data.rows.balance_start || 0;
@@ -432,25 +519,26 @@ Application = function() {
       rec.bank = bank;
       rec.actual = actual;
       rec.pos = j;
-      // console.log('rec', rec);
       list.push(rec);
     }
 
     // Display records with tallies by date descending
     elParent = queryElement('id', 'ledger');
-    // console.log('elParent (id=ledger)', elParent);
     removeSibs(elParent.firstElementChild);
-    // console.log('templates', templates);
     elTemplate = templates['ledger-row'];
-    // console.log('elTemplate', elTemplate);
     for (j = data.rows.length; j > 0; j--) {
       rec = list[j - 1];
+      aStr = dotSep(dateShort(rec.date), rec.checknum, rec.reconciled ? '✓' : '',
+        rec['void'] ? 'Void' : '');
+      bStr = dotSep(rec.transactee, rec.comment);
+
       el = elementNew(elTemplate, [
         null,
-        [rec.checknum, null, rec.transactee, null, Number(rec.actual).toFixed(2)],
+        [aStr, null, bStr, null, 'Actual ' + Number(rec.actual).toFixed(2)],
         Number(rec.amount).toFixed(2),
         Number(rec.bank).toFixed(2)
       ]);
+      el.firstElementChild.setAttribute('data-show', '/page/form|' + rec.pos);
       if (rec.reconciled) {
         el.classList.remove('ledger-active');
       } else {
@@ -487,8 +575,11 @@ Application = function() {
   };
 
   pageFnc['/page/form'] = function(list) {
-    // console.log('sample values', sample.rows[0]);
-    formSet('transaction', sample.rows[0]);
+    var rec;
+    rec = sample.rows[Number(list[0])];
+    rec.pos = list[0];
+    // console.log('/page/form clicked', list);
+    formSet('transaction', rec);
     // console.log('form values', formGet('transaction'));
   };
 
@@ -503,6 +594,7 @@ Application = function() {
   };
 
   action = function(name, list) {
+    var rec;
     switch (name) {
       case 'inc':
         tally += Number(list[0]);
@@ -513,6 +605,9 @@ Application = function() {
         break;
       case '/form/save':
         // TODO save form values before returning
+        rec = formGet('transaction');
+        // console.log('/form/save', rec);
+        sample.rows[Number(rec.pos)] = rec;
         pageShowPrev();
         break;
     }
