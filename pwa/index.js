@@ -259,6 +259,7 @@ formInputs = function(formName) {
 formSet = function(formName, inputMap) {
   var j, inpEl, inpList, key, val;
 
+  // console.log('formSet', inputMap);
   inpList = formInputs(formName);
   if (inpList) {
     for (j = 0; j < inpList.length; j++) {
@@ -270,8 +271,9 @@ formSet = function(formName, inputMap) {
       }
       switch (inpEl.getAttribute('type')) {
         case 'number':
+          // console.log('number input field', key, val);
           // Convert from number to string
-          inpEl.value = val.toFixed(2);
+          inpEl.value = Number(val).toFixed(2);
           break;
         case 'radio':
         case 'checkbox':
@@ -340,7 +342,7 @@ setChild = function(parent, childEl) {
 };
 
 // Set the inner text of the specified element. parent may be a selector string
-// in which case the first matching element is teated as the parent element.
+  // in which case the first matching element is teated as the parent element.
 setText = function(el, str) {
   el = elGet(el);
   if (el) {
@@ -427,6 +429,7 @@ Application = function() {
     pageShow,
     pageShowPrev,
     pageStk,
+    recDefault,
     sample,
     tally,
     templates,
@@ -452,6 +455,20 @@ Application = function() {
   // from the document. Each name is the value of the data-template attribute,
   // eg, data-template="ledger-row".
   templates = attrMapLoad('data-template', true, true);
+
+  // Return default record
+  recDefault = function(pos) {
+    return {
+      'pos': pos || -1,
+      'date': dateToStdStr(daysAdd(0)),
+      'transactee': '',
+      'checknum': '',
+      'amount': 0,
+      'comment': '',
+      'reconciled': false,
+      'void': false
+    };
+  };
 
   // sample defines the principal data structure used in this application
   sample = {
@@ -575,8 +592,13 @@ Application = function() {
   };
 
   pageFnc['/page/form'] = function(list) {
-    var rec;
-    rec = sample.rows[Number(list[0])];
+    var pos, rec;
+    pos = Number(list[0]);
+    if (pos >= 0) {
+      rec = sample.rows[Number(list[0])];
+    } else {
+      rec = recDefault(-1);
+    }
     rec.pos = list[0];
     // console.log('/page/form clicked', list);
     formSet('transaction', rec);
@@ -594,11 +616,16 @@ Application = function() {
   };
 
   action = function(name, list) {
-    var rec;
+    var pos, rec;
     switch (name) {
       case 'inc':
         tally += Number(list[0]);
         setText('#tally', tally);
+        break;
+      case 'new':
+        // formSet('transaction', recDefault(-1));
+        pageShow('/page/form', ['-1']);
+        // console.log('new transction', rec);
         break;
       case 'return':
         pageShowPrev();
@@ -607,7 +634,12 @@ Application = function() {
         // TODO save form values before returning
         rec = formGet('transaction');
         // console.log('/form/save', rec);
-        sample.rows[Number(rec.pos)] = rec;
+        pos = Number(rec.pos);
+        if (pos >= 0) {
+          sample.rows[pos] = rec;
+        } else {
+          sample.rows.push(rec);
+        }
         pageShowPrev();
         break;
     }

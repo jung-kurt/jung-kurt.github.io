@@ -1,2 +1,4 @@
+#!/bin/bash
+
 tidy -o /dev/null -q index.html
 jshint index.js
