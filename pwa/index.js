@@ -8,7 +8,7 @@
 var bankShow, Application, queryElement, formSet, formGet, formInputs,
   removeAllChildren, elementNew, elGet, setChild, setText, listenClick,
   elementNewWrite, daysAdd, strDaysAdd, strDateToStdStr, removeSibs,
-  attrMapLoad;
+  attrMapLoad, elementRelative;
 
 // Return object that associates names with elements that contain the specified
 // attribute. If deep is true, then for each retrieved template, replace the
@@ -94,6 +94,29 @@ elementNew = function(elSource, textList) {
   elNew = elSource.cloneNode(true);
   elementNewWrite(elNew, textList);
   return elNew;
+};
+
+// This function follows a relative path to an element and returns that
+// element. el specifies the root element. list is an array of integers that
+// identify the zero-based position of elements to follow. For example,
+// consider call elementRelative(el, [0, 2, 1]). This routine follows the first
+// child of el, then the third child of that element, then the second child of
+// that element. The function returns the final element on the path. null is
+// returned if the pathed element cannot be found.
+elementRelative = function(el, list) {
+  var pos;
+  if (el) {
+    if (list.length > 0) {
+      el = el.firstElementChild;
+      pos = list.shift();
+      while ((pos) && (el)) {
+        el = el.nextElementSibling;
+        pos--;
+      }
+      el = elementRelative(el, list);
+    }
+  }
+  return el;
 };
 
 // This function listens to clicks at the document level. handlers is an object
@@ -346,13 +369,13 @@ Application = function() {
   // sample defines the principal data structure used in this application
   sample = {
     "name": "Bank of Whoville / Checking",
-    "balance_start": 0,
+    "balance_start": 100,
     "rows": [
       {
         'date': '2022-09-01',
         'transactee': 'Whoville Hardware',
         'checknum': '4021',
-        'amount': 48,
+        'amount': -48,
         'comment': 'Horseshoes and nails',
         'reconciled': true,
         'void': false
@@ -370,7 +393,7 @@ Application = function() {
         'date': '2022-09-30',
         'transactee': 'Whoville Grains',
         'checknum': '4022',
-        'amount': 27.5,
+        'amount': -27.5,
         'comment': 'Rye seed',
         'reconciled': false,
         'void': false
@@ -379,10 +402,8 @@ Application = function() {
   };
 
   ledgerView = function(data) {
-    var el, elParent, elTemplate, j, dot, icon, bank, actual, rec, list;
+    var el, elParent, elTemplate, j, bank, actual, rec, list;
 
-    icon = '►';
-    dot = ' · ';
     bank = data.rows.balance_start || 0;
     actual = data.rows.balance_start || 0;
 
@@ -417,11 +438,11 @@ Application = function() {
 
     // Display records with tallies by date descending
     elParent = queryElement('id', 'ledger');
-    console.log('elParent (id=ledger)', elParent);
+    // console.log('elParent (id=ledger)', elParent);
     removeSibs(elParent.firstElementChild);
-    console.log('templates', templates);
+    // console.log('templates', templates);
     elTemplate = templates['ledger-row'];
-    console.log('elTemplate', elTemplate);
+    // console.log('elTemplate', elTemplate);
     for (j = data.rows.length; j > 0; j--) {
       rec = list[j - 1];
       el = elementNew(elTemplate, [
@@ -430,14 +451,26 @@ Application = function() {
         Number(rec.amount).toFixed(2),
         Number(rec.bank).toFixed(2)
       ]);
+      if (rec.reconciled) {
+        el.classList.remove('ledger-active');
+      } else {
+        el.classList.add('ledger-active');
+      }
 
-        // 'date': '2022-09-12',
-        // 'transactee': 'Bank of Whoville',
-        // 'checknum': '',
-        // 'amount': 120.5,
-        // 'comment': 'Sale of alfalfa',
-        // 'reconciled': true,
-        // 'void': false
+      // 'date': '2022-09-12',
+      // 'transactee': 'Bank of Whoville',
+      // 'checknum': '',
+      // 'amount': 120.5,
+      // 'comment': 'Sale of alfalfa',
+      // 'reconciled': true,
+      // 'void': false
+      //
+      // <div data-template="ledger-row" class="ledger-active">
+      //   <div data-show="/page/form|1">►</div>
+      //   <div><span>24 May 2023</span><br><span>Bank · Wages</span><br><span>Actual 103.50</span></div>
+      //   <div>45.00</div>
+      //   <div>100.00</div>
+      // </div>
 
       elParent.appendChild(el);
     }
