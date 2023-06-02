@@ -505,6 +505,13 @@ Application = function() {
     ]
   };
 
+  // Present the ledger records. This is the most complicated function in this
+  // example. The specefied data is first sorted by ascending date, the tallies
+  // are made based on starting balance and each record's reconciled and void
+  // flags, then an alternate list is made of these records with the tallies
+  // and original positions included. The records are converted to HTML using
+  // the elementNew() function based on a template in the original amalgamated
+  // HTML page.
   ledgerView = function(data) {
     var el, elParent, elTemplate, j, bank, actual, rec, list, aStr, bStr;
 
@@ -623,17 +630,15 @@ Application = function() {
         setText('#tally', tally);
         break;
       case 'new':
-        // formSet('transaction', recDefault(-1));
+        // Use -1 as position; the form function will interpret this as new,
+        // default record
         pageShow('/page/form', ['-1']);
-        // console.log('new transction', rec);
         break;
       case 'return':
         pageShowPrev();
         break;
       case '/form/save':
-        // TODO save form values before returning
         rec = formGet('transaction');
-        // console.log('/form/save', rec);
         pos = Number(rec.pos);
         if (pos >= 0) {
           sample.rows[pos] = rec;
