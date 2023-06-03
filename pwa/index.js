@@ -185,10 +185,15 @@ Application = function() {
         Number(rec.bank).toFixed(2)
       ]);
       el.firstElementChild.setAttribute('data-show', '/page/form|' + rec.pos);
-      if (rec.reconciled) {
+      if (rec['void']) {
         el.classList.remove('ledger-active');
+        el.firstElementChild.nextElementSibling.classList.add('ledger-void');
       } else {
-        el.classList.add('ledger-active');
+        if (rec.reconciled) {
+          el.classList.remove('ledger-active');
+        } else {
+          el.classList.add('ledger-active');
+        }
       }
 
       // 'date': '2022-09-12',
@@ -232,10 +237,7 @@ Application = function() {
         rec = recDefault(-1);
       }
       rec.pos = list[0];
-      // console.log('/page/form clicked', list);
       util.formSet('transaction', rec);
-      // TODO populate datalist so that transactees appear in a droplist
-      // console.log('form values', util.formGet('transaction'));
       datalistPopulate(data);
     } else {
       console.log('data not set in /page/form');
