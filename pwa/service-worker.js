@@ -1,5 +1,5 @@
 // version gets updated for every release
-const version = '2023-06-03:15:59:16';
+const version = '2023-06-03:16:50:02';
 
 // array of assets that will be cached on client
 const cacheAssets = [ '/pwa/min-pwa.png', '/pwa/favicon.ico', '/pwa/index.css', '/pwa/', '/pwa/index.js', '/pwa/utility.js' ];

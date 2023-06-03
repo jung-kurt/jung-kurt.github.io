@@ -25,6 +25,7 @@ Application = function() {
     recDefault,
     restoreSuccess,
     sample,
+    sampleLoad,
     templates,
     util;
 
@@ -101,6 +102,18 @@ Application = function() {
         'void': false
       }
     ]
+  };
+
+  sampleLoad = function() {
+    var j, add, rec;
+    // Refresh transaction dates to make sample more up-to-date
+    add = -1;
+    for (j = sample.rows.length; j > 0; j--) {
+      rec = sample.rows[j - 1];
+      rec.date = util.dateToStdStr(util.daysAdd(add));
+      add -= 12;
+    }
+    return sample;
   };
 
   // Populate the transactee datalist so that names that are already part of
@@ -295,7 +308,7 @@ Application = function() {
         }
         break;
       case 'sample':
-        data = sample;
+        data = sampleLoad();
         pageShow('/page/ledger', []);
         break;
       case 'project-save':
