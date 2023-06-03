@@ -155,19 +155,11 @@ Application = function() {
 
     // Sort data by date ascending
     data.rows.sort(function(a, b) {
-      var cmp;
-      if (a.date === b.date) {
-        cmp = 0;
-      } else if (a.date < b.date) {
-        cmp = -1;
-      } else {
-        cmp = 1;
-      }
-      return cmp;
+      return (a.date === b.date) ? 0 : (a.date < b.date) ? -1 : 1;
     });
     list = [];
 
-    // Calculate bank and actual talies
+    // Calculate bank and actual tallies
     for (j = 0; j < data.rows.length; j++) {
       rec = data.rows[j];
       if (! rec['void']) {
