@@ -150,6 +150,7 @@ Application = function() {
       } else {
         cmp = 1;
       }
+      return cmp;
     });
     list = [];
 
