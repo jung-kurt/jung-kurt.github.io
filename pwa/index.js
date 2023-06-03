@@ -25,15 +25,13 @@ Application = function() {
     restoreSuccess,
     sample,
     templates,
-    thisApp,
     util;
-
-  thisApp = this;
 
   // Load Utility singleton
   util = UtilityFactory.getInstance();
 
-  // Principal data structure
+  // Principal data structure. data is populated either from the file system or
+  // with a builtin sample data structure.
   data = null;
 
   // pageStk records the path of pages that have been shown so that the
@@ -41,7 +39,7 @@ Application = function() {
   // 'return' action so previously displayed pages can be shown. The
   // operational difference with a stack is that when a page is shown that is
   // already on the stack, then the stack is unwound to that element rather
-  // than being pushed.
+  // than augmented.
   pageStk = [];
 
   // pageFnc is an object that maps a page name to a function that is called
@@ -51,7 +49,8 @@ Application = function() {
 
   // templates is an object that associates names with deeply cloned elements
   // from the document. Each name is the value of the data-template attribute,
-  // eg, data-template="ledger-row".
+  // eg, data-template="ledger-row". This facilitates the ceation of new
+  // elements based on easily-defined HTML constructions.
   templates = util.attrMapLoad('data-template', true, true);
 
   // Return default record
@@ -104,12 +103,12 @@ Application = function() {
   };
 
   // Present the ledger records. This is the most complicated function in this
-  // example. The specefied data is first sorted by ascending date, the tallies
+  // example. The specified data is first sorted by ascending date, the tallies
   // are made based on starting balance and each record's reconciled and void
   // flags, then an alternate list is made of these records with the tallies
   // and original positions included. The records are converted to HTML using
   // the util.elementNew() function based on a template in the original
-  // amalgamated HTML page.
+  // HTML page.
   ledgerView = function(data) {
     var el, elParent, elTemplate, j, bank, actual, rec, list, aStr, bStr;
 
@@ -218,6 +217,8 @@ Application = function() {
     }
   };
 
+  // Display the page that was visible before the curreently-displayed page.
+  // The previous page's pre-display function will be called it is present.
   pageShowPrev = function() {
     var pg;
 
@@ -228,6 +229,8 @@ Application = function() {
     }
   };
 
+  // This function is called if reading a JSON project from the local
+  // filesystem succeeds.
   restoreSuccess = function(contents, info) {
     if (info.type === "application/json") {
       data = util.jsonDecode(contents);
@@ -243,6 +246,7 @@ Application = function() {
     }
   };
 
+  // Handle a click on an element that has the data-action attribute set.
   action = function(name, list) {
     var str, el, pos, rec;
     switch (name) {
@@ -336,5 +340,3 @@ Application = function() {
 
 // Run the program
 new Application();
-
-
