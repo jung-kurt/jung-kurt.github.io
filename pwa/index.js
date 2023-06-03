@@ -135,7 +135,7 @@ Application = function() {
   // the util.elementNew() function based on a template in the original
   // HTML page.
   ledgerView = function(data) {
-    var el, elParent, elTemplate, j, bank, actual, rec, list, aStr, bStr;
+    var el, elAmount, elParent, elTemplate, j, bank, actual, rec, list, aStr, bStr;
 
     bank = data.rows.balance_start || 0;
     actual = data.rows.balance_start || 0;
@@ -187,7 +187,8 @@ Application = function() {
       el.firstElementChild.setAttribute('data-show', '/page/form|' + rec.pos);
       if (rec['void']) {
         el.classList.remove('ledger-active');
-        el.firstElementChild.nextElementSibling.classList.add('ledger-void');
+        elAmount = util.elementRelative(el, [2]);
+        elAmount.classList.add('ledger-void');
       } else {
         if (rec.reconciled) {
           el.classList.remove('ledger-active');
