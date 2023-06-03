@@ -3,9 +3,14 @@
   "undef": true,
   "unused": "vars",
   "globals": {
+    "JSON": true,
     "navigator": true,
     "console": true,
     "document": true,
-    "window": true
+    "window": true,
+    "empty": true,
+    "URL": true,
+    "Blob": true,
+    "FileReader": true
   }
 }

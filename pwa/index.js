@@ -19,9 +19,13 @@ var
   elementNewWrite,
   elementRelative,
   elGet,
+  fileRead,
+  fileWrite,
   formGet,
   formInputs,
   formSet,
+  jsonDecode,
+  jsonEncode,
   listenClick,
   queryElement,
   removeAllChildren,
@@ -31,6 +35,68 @@ var
   setText,
   strDaysAdd,
   strMonthShList;
+
+// Parse the specified JSON record. If an error occurs, null is returned.
+jsonDecode = function(str) {
+  try {
+    return JSON.parse(str);
+  } catch (error) {
+    return null;
+  }
+};
+
+// Do nothing function
+empty = function() {};
+
+// Encode the specified object to a string. space is an optional string or
+// number and is used to insert whitespace. An empty string is returned if an
+// error occurs.
+jsonEncode = function(obj, space) {
+  try {
+    return JSON.stringify(obj, null, space);
+  } catch (error) {
+    return '';
+  }
+};
+
+// Raises a system dialog to write str to the local filesystem. mime specifies
+// the MIME type of str. filename specifies the suggested name of the file.
+fileWrite = function(str, mime, filename) {
+  var aEl, url;
+
+  url = URL.createObjectURL(new Blob([str], { type: mime || 'text/plain'}));
+  aEl = document.createElement('a');
+  aEl.setAttribute('href', url);
+  aEl.setAttribute('download', filename || '');
+  aEl.click();
+  window.setTimeout(function() {
+    URL.revokeObjectURL(url);
+    // console.log('revoke ' + filename + ' data url');
+  }, 60000);
+
+};
+
+// fileRead is called with the DOM element of a file input element when
+// that element receives the input event. If the file is successfully read,
+// success is called with the file contents and the file object. This object
+// has the following fields: name (eg, "data.json"), size (eg, 143), type (eg,
+// "application/json"). If an error occurs, err is called with an error
+// message.
+fileRead = function(el, success, err) {
+  var rdr, fl;
+
+  if (typeof err !== 'function') err = empty;
+  if (el.files.length) {
+    fl = el.files[0];
+    rdr = new FileReader();
+    rdr.onload = function(content) {
+      if (content && content.target && content.target.result) {
+        if (typeof success === 'function') success(content.target.result, fl);
+      } else err('contents not loaded');
+    };
+    rdr.readAsText(fl);
+  } else err('no files selected');
+};
 
 // Return object that associates names with elements that contain the specified
 // attribute. If deep is true, then for each retrieved template, replace the
@@ -424,12 +490,14 @@ dateShort = function(stdDt) {
 Application = function() {
   var
     action,
+    data,
     ledgerView,
     pageFnc,
     pageShow,
     pageShowPrev,
     pageStk,
     recDefault,
+    restoreSuccess,
     sample,
     tally,
     templates,
@@ -437,6 +505,9 @@ Application = function() {
 
   thisApp = this;
   tally = 0;
+
+  // Principal data structure
+  data = null;
 
   // pageStk records the path of pages that have been shown so that the
   // currently displayed page is at the top of the stack. This facilitates the
@@ -592,24 +663,32 @@ Application = function() {
     var el;
     el = queryElement('id', 'ledger');
     if (el) {
-      // el.innerText = new Date().toString();
-      // setChild(el, ledgerView(sample));
-      ledgerView(sample);
+      if (data) {
+        // el.innerText = new Date().toString();
+        // setChild(el, ledgerView(sample));
+        ledgerView(data);
+      } else {
+        console.log('data not set in /page/ledger');
+      }
     }
   };
 
   pageFnc['/page/form'] = function(list) {
     var pos, rec;
-    pos = Number(list[0]);
-    if (pos >= 0) {
-      rec = sample.rows[Number(list[0])];
+    if (data) {
+      pos = Number(list[0]);
+      if (pos >= 0) {
+        rec = data.rows[Number(list[0])];
+      } else {
+        rec = recDefault(-1);
+      }
+      rec.pos = list[0];
+      // console.log('/page/form clicked', list);
+      formSet('transaction', rec);
+      // console.log('form values', formGet('transaction'));
     } else {
-      rec = recDefault(-1);
+      console.log('data not set in /page/form');
     }
-    rec.pos = list[0];
-    // console.log('/page/form clicked', list);
-    formSet('transaction', rec);
-    // console.log('form values', formGet('transaction'));
   };
 
   pageShowPrev = function() {
@@ -622,8 +701,23 @@ Application = function() {
     }
   };
 
+  restoreSuccess = function(contents, info) {
+    if (info.type === "application/json") {
+      data = jsonDecode(contents);
+      if (data) {
+        // TODO check for data validity here
+        pageShow('/page/ledger', []);
+      } else {
+        console.log('failure to decode JSON file');
+      }
+    } else {
+      console.log('expecting JSON file, got ' + info.type);
+      data = null;
+    }
+  };
+
   action = function(name, list) {
-    var pos, rec;
+    var str, el, pos, rec;
     switch (name) {
       case 'inc':
         tally += Number(list[0]);
@@ -637,15 +731,44 @@ Application = function() {
       case 'return':
         pageShowPrev();
         break;
+      case 'ledger':
+        if (data) {
+          pageShow('/page/ledger', []);
+        } else {
+          pageShow('/page/ledger-no-data', []);
+        }
+        break;
+      case 'sample':
+        data = sample;
+        pageShow('/page/ledger', []);
+        break;
+      case 'project-save':
+        console.log('project save');
+        str = jsonEncode(data, '  ');
+        if (str) {
+          fileWrite(str, 'application/json', 'sample.json');
+        }
+        break;
+      case 'project-restore':
+        data = null;
+        el = queryElement('id', 'datafile');
+        if (el) {
+          fileRead(el, restoreSuccess);
+        }
+        break;
       case '/form/save':
         rec = formGet('transaction');
         pos = Number(rec.pos);
-        if (pos >= 0) {
-          sample.rows[pos] = rec;
+        if (data) {
+          if (pos >= 0) {
+            data.rows[pos] = rec;
+          } else {
+            data.rows.push(rec);
+          }
+          pageShowPrev();
         } else {
-          sample.rows.push(rec);
+          console.log('data not set in /form/save');
         }
-        pageShowPrev();
         break;
     }
   };
