@@ -229,3 +229,7 @@ input[type="button"] {
 .ledger-void {
   text-decoration: line-through;
 }
+
+div[data-page="/help"] summary {
+  font-weight: bold;
+}

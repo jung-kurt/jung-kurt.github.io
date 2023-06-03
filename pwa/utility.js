@@ -226,7 +226,6 @@ UtilityFactory = (function() {
       // The click handler is set at the document level, rather than on the
       // initiator, to avoid garbage collection issues with event handlers.
       document.addEventListener('click', function(evt) {
-      // window.addEventListener('click', function(evt) {
         var key, el, val, handled, name;
 
         handled = false;

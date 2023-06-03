@@ -38,7 +38,7 @@
           <ul>
 
             <li>
-            does not communicate with any server except to retreive updated
+            does not communicate with any server except to retrieve updated
             static resources, consequently it can be hosted on a static web
             server
             </li>
@@ -96,8 +96,8 @@
 
             <li>
             a makefile and other project build tools, for example, asset
-            minifier, source code linter, cache version updater, and server
-            synchronization script
+            minifier, source code linter, spellchecker, cache version updater,
+            and server synchronization script
             </li>
 
           </ul>
@@ -244,9 +244,9 @@
           This particular project uses a rather opinionated approach in that
           each web page is put into its own div block in an amalgamated HTML
           page. This div blocks are siblings. When one page is shown
-          programtically its siblings are automatically hidden. This allows the
+          programmatically its siblings are automatically hidden. This allows the
           application to function quickly since there are no network calls to
-          retreive content.
+          retrieve content.
           </p>
 
         </details>
@@ -289,7 +289,7 @@
           couple of lines. This file implements the strategy the application
           will use to fetch resources from the host server, which incidentally
           can be a static web server. Think of a service worker as a little
-          local web server that your app will contact to retreive resources. If
+          local web server that your app will contact to retrieve resources. If
           a resource is available in the local cache, the service worked will
           deliver that. If a resource is not available, it will contact the
           host server to get it. In this project, an "offline first" strategy
@@ -326,7 +326,7 @@
           the HTML as simple as possible. When the application does need to use
           a custom style, try to make use of the HTML's structure in order to
           minimize the number of elements that need to assign the class
-          specificially. For example, rather than apply a class (for example,
+          specifically. For example, rather than apply a class (for example,
           <code>class="record"</code>) to a number of repeating elements, it
           might be a lot simpler to instead apply a class (for example,
           <code>class="record-container"</code> to the parent of the repeating
@@ -502,7 +502,10 @@
           </p>
 
           <p>
-          Dedicated to Hans Valley, friend and former colleague.
+          Dedicated to <b>Hans Valley</b>, friend and, for too short a time,
+          former colleague. This code may not achieve the appellation of
+          "elegant" that we always strove for, but it does stand on its own
+          without bulky dependencies.
           </p>
 
         </details>
