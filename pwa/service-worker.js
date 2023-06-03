@@ -1,8 +1,8 @@
 // version gets updated for every release
-const version = '2023-06-03:01:07:04';
+const version = '2023-06-03:11:41:29';
 
 // array of assets that will be cached on client
-const cacheAssets = [ '/pwa/min-pwa.png', '/pwa/favicon.ico', '/pwa/index.css', '/pwa/', '/pwa/index.js' ];
+const cacheAssets = [ '/pwa/min-pwa.png', '/pwa/favicon.ico', '/pwa/index.css', '/pwa/', '/pwa/index.js', '/pwa/utility.js' ];
 
 // prefix to distinguish cache from other PWAs served from this location
 const cachePrefix = 'pwa-';

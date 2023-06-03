@@ -12,7 +12,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="favicon.ico">
     <link href="index.css" rel="stylesheet" />
-    <script src="index.js" defer></script>
   </head>
 
   <body>
@@ -502,7 +501,7 @@
           </p>
 
           <p>
-          Dedicated to Hans Valley
+          Dedicated to Hans Valley, friend and former colleague.
           </p>
 
         </details>
@@ -557,6 +556,24 @@
 
     <datalist id="transactees">
     </datalist>
+
+    <script src="utility.js"></script>
+
+    <script src="index.js"></script>
+
+    <script>
+
+      // If you do not want to implement a progressive web app, remove the
+      // following block of code. In that case, the files manifest.json and
+      // service-worker.js can be removed from the deployed assets. One
+      // consequence of doing this is that users may be confused that the
+      // history stack and back key will not work as expected. Other than that,
+      // the application will function normally.
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register('/pwa/service-worker.js');
+      }
+
+    </script>
 
   </body>
 
