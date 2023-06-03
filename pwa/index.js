@@ -16,6 +16,7 @@ Application = function() {
   var
     action,
     data,
+    datalistPopulate,
     ledgerView,
     pageFnc,
     pageShow,
@@ -100,6 +101,30 @@ Application = function() {
         'void': false
       }
     ]
+  };
+
+  // Populate the transactee datalist so that names that are already part of
+  // the dataset will be available as a droplist in the transction form.
+  datalistPopulate = function(data) {
+    var elList, elOpt, el, j, row, list;
+    elList = util.queryElement('id', 'transactees');
+    if (elList) {
+      elOpt = templates.option;
+      if (elOpt) {
+        list = [];
+        for (j = 0; j < data.rows.length; j++) {
+          row = data.rows[j];
+          list.push(row.transactee);
+        }
+        util.sortUnique(list);
+        util.removeAllChildren(elList);
+        for (j = 0; j < list.length; j++) {
+          el = util.elementNew(elOpt, []);
+          el.setAttribute('value', list[j]);
+          elList.appendChild(el);
+        }
+      }
+    }
   };
 
   // Present the ledger records. This is the most complicated function in this
@@ -190,8 +215,6 @@ Application = function() {
     el = util.queryElement('id', 'ledger');
     if (el) {
       if (data) {
-        // el.innerText = new Date().toString();
-        // setChild(el, ledgerView(sample));
         ledgerView(data);
       } else {
         console.log('data not set in /page/ledger');
@@ -204,14 +227,16 @@ Application = function() {
     if (data) {
       pos = Number(list[0]);
       if (pos >= 0) {
-        rec = data.rows[Number(list[0])];
+        rec = data.rows[pos];
       } else {
         rec = recDefault(-1);
       }
       rec.pos = list[0];
       // console.log('/page/form clicked', list);
       util.formSet('transaction', rec);
+      // TODO populate datalist so that transactees appear in a droplist
       // console.log('form values', util.formGet('transaction'));
+      datalistPopulate(data);
     } else {
       console.log('data not set in /page/form');
     }

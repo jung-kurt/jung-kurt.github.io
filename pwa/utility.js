@@ -470,6 +470,15 @@ UtilityFactory = (function() {
       return stdDt;
     };
 
+    // Given an array of a simple type, eg string, sort the array and remove
+    // duplicates.
+    this.sortUnique = function(a) {
+      a.sort();
+      a.filter(function(item, pos, b) {
+        return !pos || item !== b[pos - 1];
+      });
+    };
+
   }
 
   var instance;
