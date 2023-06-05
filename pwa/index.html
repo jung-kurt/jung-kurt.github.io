@@ -313,6 +313,18 @@
           are added or removed from the project, in general not too often.
           </p>
 
+          <p>
+          In a web app like this example it is necessary to generate HTML
+          programmatically. Most apps use some kind of templating library or
+          HTML node generator. This app uses a different technique: certain
+          constructions in the HTML contain the data-template attribute. At
+          program startup, these blocks are deep cloned and saved for later
+          reuse. When these blocks need to be rendered into HTML, a utility
+          function named elementNew() is called that either applies text data
+          to selected nodes in the template, skips certain nodes, or recurses
+          into template sub-blocks. This technique is quite intuitive to use.
+          </p>
+
         </details>
 
         <details>
