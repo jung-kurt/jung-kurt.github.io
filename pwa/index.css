@@ -233,3 +233,7 @@ input[type="button"] {
 div[data-page="/help"] summary {
   font-weight: bold;
 }
+
+code {
+  font-weight: bold;
+}
