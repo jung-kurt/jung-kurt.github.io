@@ -1,15 +1,15 @@
 {
-  "short_name": "Minimal PWA",
+  "short_name": "PWA",
   "name": "Let's Build a PWA",
   "icons": [
     {
-      "src": "min-pwa.png",
+      "src": "pwa.png",
       "type": "image/png",
-      "sizes": "256x256"
+      "sizes": "512x512"
     },
     {
-      "src": "min-pwa.png",
-      "sizes": "256x256",
+      "src": "pwa.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }

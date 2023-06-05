@@ -116,9 +116,15 @@
         <h1>Ledger</h1>
 
         <p>
-        There is currently no data associated with this application. To restore
-        a previously backed up project, click the following button.
+        There is currently no data associated with this application. You have
+        two options. If you have previously saved a data file, restore it by
+        specifying the file in the <b>Restore</b> section. If you want to load
+        a small sample data set, click the button in the <b>Sample</b> section.
+        In the latter case, you can modify the data and save it to its own file
+        for later use.
         </p>
+
+        <h2>Restore</h2>
 
         <form data-name="project-restore">
 
@@ -130,20 +136,14 @@
 
         </form>
 
-        <details>
+        <h2>Load sample data</h2>
 
-          <summary>Alternative option</summary>
+        <p>
+        Click the following button to initialize the program with a small sample
+        project. You will be able to modify the data to adapt it to your own project.
+        </p>
 
-          <h2>Load sample data</h2>
-
-          <p>
-          Click the following button to initialize the program with a small sample
-          project. You will be able to modify the data to adapt it to your own project.
-          </p>
-
-          <p><button data-action="sample">Load sample</button></p>
-
-        </details>
+        <p><button data-action="sample">Load sample</button></p>
 
         <p><button data-href="/help">Help</button></p>
 
@@ -231,38 +231,42 @@
 
         <h1>Help</h1>
 
-          <details>
+        <p>
+        This project demonstrates basic components of a progressive web app
+        (PWA). It uses a rather opinionated approach in which each application
+        page is put into its own div block in an amalgamated HTML page. The div
+        blocks are siblings. When one page is shown programmatically its
+        siblings are automatically hidden. This allows the application to
+        function quickly since there are no network calls to retrieve content.
+        </p>
 
-          <summary>Introduction</summary>
+        <p>
+        All programmatic logic is handled on the browser. The static web server
+        simply delivers HTML, JavaScript, graphic resources, and the manifest
+        file.
+        </p>
 
-          <p>
-          This project demonstrates basic components of a progressive web app
-          (PWA).
-          </p>
+        <p>
+        User data is saved and restored locally by means of system dialog
+        boxes.
+        </p>
 
-          <p>
-          This particular project uses a rather opinionated approach in that
-          each web page is put into its own div block in an amalgamated HTML
-          page. This div blocks are siblings. When one page is shown
-          programmatically its siblings are automatically hidden. This allows the
-          application to function quickly since there are no network calls to
-          retrieve content.
-          </p>
+        <p>
+        The JavaScript code is separated into two files. The <b>utility.js</b>
+        file contains helper routines. This file can be used without change
+        with other applications. It uses a singleton object so that it can be
+        instantiated multiple times with no overhead. The <b>index.js</b> file
+        contains application logic.
+        </p>
 
-        </details>
+        <p>
+        In general, these two files should be concatenated and minified when
+        the application is deployed.
+        </p>
 
         <details>
 
           <summary>Development</summary>
-
-          <p>
-          The technique shown in this project is to use a single HTML page that
-          has multiple div blocks that are siblings to one another. The
-          pageShow() function lets you easily show one at a time. The
-          disadvantage of this scheme is that pages cannot be nested.
-          </p>
-
-          <h2>PWA considerations</h2>
 
           <p>
           This project can function as a normal web application without tapping
@@ -272,21 +276,17 @@
           installable as a PWA.
           </p>
 
-          <h3>manifest.json</h3>
-
           <p>
-          The manifest.json file and the icon that it references are typically
-          prepared at the beginning of a project and are only infrequently
-          modified after that. On the topic of icons, a good article is <a
-          href="https://web.dev/maskable-icon/">Adaptive icon support in
-          PWAs</a> for details about maskable icons with PWAs.
+          The <b>manifest.json</b> file and the icon that it references are
+          typically prepared at the beginning of a project and are only
+          infrequently modified after that. On the topic of icons, a good
+          article is <a href="https://web.dev/maskable-icon/">Adaptive icon
+          support in PWAs</a> for details about maskable icons with PWAs.
           </p>
 
-          <h3>service-worker.js</h3>
-
           <p>
-          The service-worker.js file is basically boilerplate except for a
-          couple of lines. This file implements the strategy the application
+          The <b>service-worker.js</b> file is basically boilerplate except for
+          a couple of lines. This file implements the strategy the application
           will use to fetch resources from the host server, which incidentally
           can be a static web server. Think of a service worker as a little
           local web server that your app will contact to retrieve resources. If
@@ -497,12 +497,7 @@
           <summary>About</summary>
 
           <p>
-          This demonstration shows some components and techniques that could be
-          used in real applications.
-          </p>
-
-          <p>
-          This little program is dedicated to <b>Hans Valley</b>, friend and,
+          This example program is dedicated to <b>Hans Valley</b>, friend and,
           for too short a time, former colleague. This code may not achieve the
           appellation of "elegant" that we always strove for, but it does stand
           on its own without bulky dependencies.
