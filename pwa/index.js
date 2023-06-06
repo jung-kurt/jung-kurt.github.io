@@ -30,7 +30,7 @@ Application = function() {
     util;
 
   // Load Utility singleton
-  util = UtilityFactory.getInstance();
+  util = Utility.getInstance();
 
   // Principal data structure. data is populated either from the file system or
   // with a builtin sample data structure.

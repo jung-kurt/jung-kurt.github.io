@@ -11,7 +11,7 @@
     "JSON": true,
     "navigator": true,
     "URL": true,
-    "UtilityFactory": true,
+    "Utility": true,
     "window": true
   }
 }

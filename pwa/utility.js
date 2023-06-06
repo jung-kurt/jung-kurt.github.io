@@ -1,15 +1,15 @@
 // This file contains a utility object with methods that can facilitate the
 // programming of an application. To instantiate it, call
 //
-//   util = UtilityFactory.getInstance();
+//   util = Utility.getInstance();
 //
 // This returns a singleton object, that is, an object that is created at first
 // call and reused for subsequent instantiations. No state is stored in this
 // object.
 
-var UtilityFactory;
+var Utility;
 
-UtilityFactory = (function() {
+Utility = (function() {
 
   function UtilityClass() {
 

@@ -322,7 +322,10 @@
           reuse. When these blocks need to be rendered into HTML, a utility
           function named elementNew() is called that either applies text data
           to selected nodes in the template, skips certain nodes, or recurses
-          into template sub-blocks. This technique is quite intuitive to use.
+          into template sub-blocks. This technique simplifies page generation
+          because the templates themselves are valid HTML and can be checked
+          for semantic and visual correctness before their original text nodes
+          are replaced programmatically.
           </p>
 
         </details>
